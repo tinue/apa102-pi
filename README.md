@@ -43,5 +43,10 @@ And here it is, the finished contraption running a "rainbow" program:
 
 Plugged into the USB port is a WLAN stick. This way I can reprogram the light show from my desk, even if the strips are installed outside as a christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
 
+## Video of the installation
+
+Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W-1U
+
+
 ## Using the library
 TODO
