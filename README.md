@@ -37,5 +37,11 @@ All combined, this is my extremely low-tech wiring diagram:
 
 ![Wiring Diagram](Wiring.jpg)
 
+And here it is, the finished contraption running a "rainbow" program:
+
+![Raspberry Pi Zero driving APA102 LEDs](Finished.jpg)
+
+Plugged into the USB port is a WLAN stick. This way I can reprogram the light show from my desk, even if the strips are installed outside as a christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
+
 ## Using the library
 TODO
