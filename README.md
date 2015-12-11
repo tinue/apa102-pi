@@ -22,7 +22,7 @@ Ideally, a 5$ Raspberry Pi Zero is dedicated to the task of driving the LEDs. Th
 
 ## Wiring
 
-The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 level shifter for both the clock and the MOSI signal.
+The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
 
 Without a level shifter, the wiring is very simple:
 - LED ground to one of the Raspberry ground pins
@@ -50,3 +50,8 @@ Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W
 
 ## Using the library
 TODO
+
+## Release history
+2015-04-13: Initial version
+2015-12-04: Add documentation
+2015-12-11: Rewrote the examples, driver itself is unchanged
