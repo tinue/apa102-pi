@@ -52,6 +52,7 @@ Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W
 TODO
 
 ## Release history
-2015-04-13: Initial version
-2015-12-04: Add documentation
-2015-12-11: Rewrote the examples, driver itself is unchanged
+
+- 2015-04-13: Initial version
+- 2015-12-04: Add documentation
+- 2015-12-11: Rewrote the examples, driver itself is unchanged
