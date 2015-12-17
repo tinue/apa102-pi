@@ -56,3 +56,4 @@ TODO
 - 2015-04-13: Initial version
 - 2015-12-04: Add documentation
 - 2015-12-11: Rewrote the examples, driver itself is unchanged
+- 2015-12-17: Fixes for reported problems; Update all of the color samples; Decouple number of steps from number of LEDs

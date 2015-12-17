@@ -96,10 +96,14 @@ class APA102:
 
     """
     void clearStrip()
-    Sets the color for the entire strip to black, and immediately shows the result. The method does
-    not update the color buffer, it only clears the strip!
+    Sets the color for the entire strip to black, and immediately shows the result.
     """
     def clearStrip(self):
+        # Clear the buffer
+        for led in range(self.numLEDs * 3): # 3 bytes per LED, for R, G and B
+            self.leds[led] = 0x00 # Set color to black.
+        # Clear the LED (no need to check the buffer, it's all black anyway)
+        self.clockStartFrame()
         self.spi.xfer2([self.ledstart, 0x00, 0x00, 0x00] * self.numLEDs)
         self.clockEndFrame() # ... and clock the end frame so that also the last LED(s) shut down.
 
@@ -157,6 +161,7 @@ class APA102:
     Green -> Red -> Blue -> Green
     """
     def wheel(self, wheelPos):
+        if wheelPos > 254: wheelPos = 254 # Safeguard
         if wheelPos < 85: # Green -> Red
             return self.combineColor(wheelPos * 3, 255 - wheelPos * 3, 0)
         elif wheelPos < 170: # Red -> Blue

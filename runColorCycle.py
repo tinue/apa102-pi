@@ -1,10 +1,16 @@
 import colorschemes
 
-myCycle = colorschemes.Solid(numLEDs=430, pauseValue=0.01, numCycles = 1)
+numLEDs = 430
+
+# One Cycle with one step and a pause of one second. Hence one second of white light
+myCycle = colorschemes.Solid(numLEDs=numLEDs, pauseValue=1, numStepsPerCycle = 1, numCycles = 1)
 myCycle.start()
-myCycle = colorschemes.StrandTest(numLEDs=430, pauseValue=0, numCycles = 4, globalBrightness=10)
+# One cycle of red, green and blue each
+myCycle = colorschemes.StrandTest(numLEDs=numLEDs, pauseValue=0, numStepsPerCycle = numLEDs, numCycles = 3, globalBrightness=10)
 myCycle.start()
-myCycle = colorschemes.Rainbow(numLEDs=430, pauseValue=0, numCycles = 6, globalBrightness=10)
+# Two slow trips through the rainbow
+myCycle = colorschemes.Rainbow(numLEDs=numLEDs, pauseValue=0, numStepsPerCycle = 255, numCycles = 2, globalBrightness=10)
 myCycle.start()
-myCycle = colorschemes.TheaterChase(numLEDs=430, pauseValue=0.04, numCycles = 2, globalBrightness=10)
+# Five quick trips through the rainbow
+myCycle = colorschemes.TheaterChase(numLEDs=numLEDs, pauseValue=0.04, numStepsPerCycle = 35, numCycles = 5, globalBrightness=10)
 myCycle.start()
