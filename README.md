@@ -17,6 +17,7 @@ The library is designed to take care of the details about sending colour command
 * SPI enabled and active (raspi-config, Advanced Options, SPI, Enable and load the module by default)
 * The SPI must be free and unused
 * A library named "spidev", Version 3. I used the one from here: https://github.com/doceme/py-spidev
+* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install "spidev" with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
 
 Ideally, a 5$ Raspberry Pi Zero is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
