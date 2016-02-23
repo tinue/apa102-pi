@@ -13,7 +13,7 @@ The really nice part about the driver chip is this: Once it has received its own
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2015-11-21 version of Raspbian Jessie).
+* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2016-02-09 version of Raspbian Jessie Lite).
 * SPI enabled and active (raspi-config, Advanced Options, SPI, Enable and load the module by default)
 * The SPI must be free and unused
 * A library named "spidev", Version 3. I used the one from here: https://github.com/doceme/py-spidev
@@ -49,8 +49,23 @@ Plugged into the USB port is a WLAN stick. This way I can reprogram the light sh
 Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W-1U
 
 
-## Using the library
-TODO
+## Quick setup
+
+Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be installed manually. Of course, you can use the full raspbian jessie image and save yourself the installation steps.
+
+Make sure that your Raspberry Pi is working and has a network connection. Also make sure that your installation is current (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
+- Activate SPI: sudo raspi-config; Go to "Advanced Options"; Go to "SPI"; Choose "Yes", "Ok", "Yes" again, "Ok" again, and then exit the tool and reboot
+- Install the git client: sudo apt-get install git
+- Prepare GIT: git config --global user.name "John Doe" && git config --global user.email johndoe@example.com
+- Install Python 3: sudo apt-get install python3 && sudo apt-get install python3-dev
+- Fetch the spidev library: cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip
+- Install the library: cd py-spidev-master && sudo python3 ./setup.py install
+- Create a development directory and change into it: mkdir ~/Development && cd ~/Development
+- Get the APA102 Library and sample light programs: git clone https://github.com/tinue/APA102_Pi.git
+- You might want to set the number of LEDs to match your strip: cd APA102_Pi && nano runColorCycle.py; Update the number, Ctrl-X and "Yes" to save.
+- Run the sample lightshow: python3 runColorCycle.py
+
+
 
 ## Release history
 
