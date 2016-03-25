@@ -50,9 +50,14 @@ you will see that not even person 9 knows the color yet. This information is sti
 Essentially the driver sends additional zeroes to LED 1 as long as it takes for the last color frame
 to make it down the line to the last LED.
 """
+
+rgb_map = { 'rgb': [3,2,1], 'rbg': [3,1,2], 'grb': [2,3,1], 'gbr': [2,1,3], 'brg': [1,3,2], 'bgr': [1,2,3] }
+
 class APA102:
-    def __init__(self, numLEDs, globalBrightness = 31): # The number of LEDs in the Strip
+    def __init__(self, numLEDs, order='rgb', globalBrightness = 31): # The number of LEDs in the Strip
         self.numLEDs = numLEDs
+        order = order.lower()
+        self.rgb = rgb_map.get(order, rgb_map['rgb'])
         # LED startframe is three "1" bits, followed by 5 brightness bits
         self.ledstart = (globalBrightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
         self.leds = [self.ledstart,0,0,0] * self.numLEDs # Pixel buffer
@@ -113,9 +118,9 @@ class APA102:
             return # again, invsible
         startIndex = 4 * ledNum
         self.leds[startIndex] = self.ledstart
-        self.leds[startIndex+3] = red
-        self.leds[startIndex+1] = green
-        self.leds[startIndex+2] = blue
+        self.leds[startIndex+self.rgb[0]] = red
+        self.leds[startIndex+self.rgb[1]] = green
+        self.leds[startIndex+self.rgb[2]] = blue
 
     """
     void setPixelRGB(ledNum,rgbColor)
