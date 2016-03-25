@@ -50,15 +50,17 @@ you will see that not even person 9 knows the color yet. This information is sti
 Essentially the driver sends additional zeroes to LED 1 as long as it takes for the last color frame
 to make it down the line to the last LED.
 """
+
+rgb_map = { 'rgb': [3,2,1], 'rbg': [3,1,2], 'grb': [2,3,1], 'gbr': [2,1,3], 'brg': [1,3,2], 'bgr': [1,2,3] }
+
 class APA102:
-    def __init__(self, numLEDs, globalBrightness = 31): # The number of LEDs in the Strip
+    def __init__(self, numLEDs, order='rgb', globalBrightness = 31): # The number of LEDs in the Strip
         self.numLEDs = numLEDs
+        order = order.lower()
+        self.rgb = rgb_map.get(order, rgb_map['rgb'])
         # LED startframe is three "1" bits, followed by 5 brightness bits
         self.ledstart = (globalBrightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
-        self.leds = [] # Pixel buffer
-        for _ in range(self.numLEDs): # Allocate the entire buffer. If later some LEDs are not set,
-            self.leds.extend([self.ledstart]) # they will just be black,
-            self.leds.extend([0x00] * 3) #  instead of crashing the driver.
+        self.leds = [self.ledstart,0,0,0] * self.numLEDs # Pixel buffer
         self.spi = spidev.SpiDev()  # Init the SPI device
         self.spi.open(0, 1)  # Open SPI port 0, slave device (CS)  1
         self.spi.max_speed_hz=8000000 # Up the speed a bit, so that the LEDs are painted faster
@@ -68,7 +70,7 @@ class APA102:
     This method clocks out a start frame, telling the receiving LED that it must update its own color now.
     """
     def clockStartFrame(self):
-        _ = self.spi.xfer2([0x00, 0x00, 0x00, 0x00])  # Start frame, 32 zero bits
+        self.spi.xfer2([0]*4)  # Start frame, 32 zero bits
 
     """
     void clockEndFrame()
@@ -100,12 +102,9 @@ class APA102:
     """
     def clearStrip(self):
         # Clear the buffer
-        for led in range(self.numLEDs * 3): # 3 bytes per LED, for R, G and B
-            self.leds[led] = 0x00 # Set color to black.
-        # Clear the LED (no need to check the buffer, it's all black anyway)
-        self.clockStartFrame()
-        self.spi.xfer2([self.ledstart, 0x00, 0x00, 0x00] * self.numLEDs)
-        self.clockEndFrame() # ... and clock the end frame so that also the last LED(s) shut down.
+        for led in range(self.numLEDs):
+            self.setPixel(led, 0, 0, 0)
+        self.show()
 
     """
     void setPixel(ledNum, red, green, blue)
@@ -119,9 +118,9 @@ class APA102:
             return # again, invsible
         startIndex = 4 * ledNum
         self.leds[startIndex] = self.ledstart
-        self.leds[startIndex+3] = red
-        self.leds[startIndex+1] = green
-        self.leds[startIndex+2] = blue
+        self.leds[startIndex+self.rgb[0]] = red
+        self.leds[startIndex+self.rgb[1]] = green
+        self.leds[startIndex+self.rgb[2]] = blue
 
     """
     void setPixelRGB(ledNum,rgbColor)
