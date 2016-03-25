@@ -73,3 +73,4 @@ Make sure that your Raspberry Pi is working and has a network connection. Also m
 - 2015-12-04: Add documentation
 - 2015-12-11: Rewrote the examples, driver itself is unchanged
 - 2015-12-17: Fixes for reported problems; Update all of the color samples; Decouple number of steps from number of LEDs
+- 2016-03-25: Merged changes from kapacuk: Allow stripes with different color coding than RGB
