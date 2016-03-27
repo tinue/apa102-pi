@@ -32,6 +32,17 @@ class TheaterChase(ColorCycleTemplate):
         return 1
 
 
+class RoundAndRound(ColorCycleTemplate):
+
+    def init(self, strip, numLEDs):
+        strip.setPixelRGB(0, 0xFF0000);
+        strip.setPixelRGB(1, 0x00FF00);
+
+    def update(self, strip, numLEDs, numStepsPerCycle, currentStep, currentCycle):
+        # Simple class to demonstrate the "rotate" method
+        strip.rotate()
+        return 1
+
 
 class Solid(ColorCycleTemplate):
 

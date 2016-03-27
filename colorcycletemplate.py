@@ -7,12 +7,13 @@ A specific color cycle must subclass this template, and implement at least the
 'update' method.
 """
 class ColorCycleTemplate:
-    def __init__(self, numLEDs, pauseValue = 0, numStepsPerCycle = 100, numCycles = -1, globalBrightness = 4): # Init method
+    def __init__(self, numLEDs, pauseValue = 0, numStepsPerCycle = 100, numCycles = -1, globalBrightness = 4, order = 'rgb'): # Init method
         self.numLEDs = numLEDs # The number of LEDs in the strip
         self.pauseValue = pauseValue # How long to pause between two runs
         self.numStepsPerCycle = numStepsPerCycle # The number of steps in one cycle.
         self.numCycles = numCycles # How many times will the program run
         self.globalBrightness = globalBrightness # Brightness of the strip
+        self.order = order # Strip colour ordering
 
     """
     void init()
@@ -55,7 +56,7 @@ class ColorCycleTemplate:
     """
     def start(self):
         try:
-            strip = apa102.APA102(self.numLEDs, self.globalBrightness) # Initialize the strip
+            strip = apa102.APA102(self.numLEDs, self.order, self.globalBrightness) # Initialize the strip
             strip.clearStrip()
             self.init(strip, self.numLEDs) # Call the subclasses init method
             strip.show()
