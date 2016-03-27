@@ -131,6 +131,15 @@ class APA102:
         self.setPixel(ledNum, (rgbColor & 0xFF0000) >> 16, (rgbColor & 0x00FF00) >> 8, rgbColor & 0x0000FF)
 
     """
+    void rotate(positions)
+    Treating the internal leds array as a circular buffer, rotate it by the specified number of positions.
+    The number could be negative, which means rotating in the opposite direction.
+    """
+    def rotate(self, positions=1):
+        cutoff = 4*(positions % self.numLEDs)
+        self.leds = self.leds[cutoff:] + self.leds[:cutoff]
+
+    """
     void show()
     Sends the content of the pixel buffer to the strip.
     Todo: More than 1024 LEDs requires more than one xfer operation.
