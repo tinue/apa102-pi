@@ -54,7 +54,7 @@ to make it down the line to the last LED.
 rgb_map = { 'rgb': [3,2,1], 'rbg': [3,1,2], 'grb': [2,3,1], 'gbr': [2,1,3], 'brg': [1,3,2], 'bgr': [1,2,3] }
 
 class APA102:
-    def __init__(self, numLEDs, order='rgb', globalBrightness = 31): # The number of LEDs in the Strip
+    def __init__(self, numLEDs, globalBrightness = 31, order='rgb'): # The number of LEDs in the Strip
         self.numLEDs = numLEDs
         order = order.lower()
         self.rgb = rgb_map.get(order, rgb_map['rgb'])

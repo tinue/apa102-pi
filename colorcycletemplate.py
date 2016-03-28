@@ -56,7 +56,7 @@ class ColorCycleTemplate:
     """
     def start(self):
         try:
-            strip = apa102.APA102(self.numLEDs, self.order, self.globalBrightness) # Initialize the strip
+            strip = apa102.APA102(numLEDs=self.numLEDs, globalBrightness=self.globalBrightness, order=self.order) # Initialize the strip
             strip.clearStrip()
             self.init(strip, self.numLEDs) # Call the subclasses init method
             strip.show()
