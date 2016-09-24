@@ -58,9 +58,8 @@ class APA102:
         self.numLEDs = numLEDs
         order = order.lower()
         self.rgb = rgb_map.get(order, rgb_map['rgb'])
-        # LED startframe is three "1" bits, followed by 5 brightness bits
-        self.ledstart = (globalBrightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
-        self.leds = [self.ledstart,0,0,0] * self.numLEDs # Pixel buffer
+        self.globalBrightness = globalBrightness
+        self.leds = [0b11100000,0,0,0] * self.numLEDs # Pixel buffer
         self.spi = spidev.SpiDev()  # Init the SPI device
         self.spi.open(0, 1)  # Open SPI port 0, slave device (CS)  1
         self.spi.max_speed_hz=8000000 # Up the speed a bit, so that the LEDs are painted faster
@@ -107,28 +106,37 @@ class APA102:
         self.show()
 
     """
-    void setPixel(ledNum, red, green, blue)
+    void setPixel(ledNum, red, green, blue, [brightness])
     Sets the color of one pixel in the LED stripe. The changed pixel is not shown yet on the Stripe, it is only
-    written to the pixel buffer. Colors are passed individually.
+    written to the pixel buffer. Colors are passed individually. If brightness is not set the global brightness
+    setting is used.
     """
-    def setPixel(self, ledNum, red, green, blue):
+    def setPixel(self, ledNum, red, green, blue, brightness=None):
         if ledNum < 0:
             return # Pixel is invisible, so ignore
         if ledNum >= self.numLEDs:
             return # again, invsible
+
+        if brightness is None:
+            brightness = self.globalBrightness
+
+        # LED startframe is three "1" bits, followed by 5 brightness bits
+        ledstart = (brightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
+
         startIndex = 4 * ledNum
-        self.leds[startIndex] = self.ledstart
+        self.leds[startIndex] = ledstart
         self.leds[startIndex+self.rgb[0]] = red
         self.leds[startIndex+self.rgb[1]] = green
         self.leds[startIndex+self.rgb[2]] = blue
 
     """
-    void setPixelRGB(ledNum,rgbColor)
+    void setPixelRGB(ledNum,rgbColor, [brightness])
     Sets the color of one pixel in the LED stripe. The changed pixel is not shown yet on the Stripe, it is only
-    written to the pixel buffer. Colors are passed combined (3 bytes concatenated)
+    written to the pixel buffer. Colors are passed combined (3 bytes concatenated). If brightness is not set the
+    global brightness setting is used.
     """
-    def setPixelRGB(self, ledNum, rgbColor):
-        self.setPixel(ledNum, (rgbColor & 0xFF0000) >> 16, (rgbColor & 0x00FF00) >> 8, rgbColor & 0x0000FF)
+    def setPixelRGB(self, ledNum, rgbColor, brightness=None):
+        self.setPixel(ledNum, (rgbColor & 0xFF0000) >> 16, (rgbColor & 0x00FF00) >> 8, rgbColor & 0x0000FF, brightness)
 
     """
     void rotate(positions)
