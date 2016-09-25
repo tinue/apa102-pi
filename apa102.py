@@ -1,4 +1,5 @@
 import spidev
+from math import ceil
 
 """
 Driver for APA102 LEDS (aka "DotStar").
@@ -54,12 +55,23 @@ to make it down the line to the last LED.
 rgb_map = { 'rgb': [3,2,1], 'rbg': [3,1,2], 'grb': [2,3,1], 'gbr': [2,1,3], 'brg': [1,3,2], 'bgr': [1,2,3] }
 
 class APA102:
-    def __init__(self, numLEDs, globalBrightness = 31, order='rgb'): # The number of LEDs in the Strip
+
+    # Constants
+    MAX_BRIGHTNESS = 31
+    LED_START = 0b11100000 # LED startframe is three "1" bits, followed by 5 brightness bits
+
+    def __init__(self, numLEDs, globalBrightness=MAX_BRIGHTNESS, order='rgb'): # The number of LEDs in the Strip
         self.numLEDs = numLEDs
         order = order.lower()
         self.rgb = rgb_map.get(order, rgb_map['rgb'])
-        self.globalBrightness = globalBrightness
-        self.leds = [0b11100000,0,0,0] * self.numLEDs # Pixel buffer
+
+        # Limit the brightness to the maximum if it's set higher
+        if globalBrightness > self.MAX_BRIGHTNESS:
+            self.globalBrightness = self.MAX_BRIGHTNESS
+        else:
+            self.globalBrightness = globalBrightness
+
+        self.leds = [self.LED_START,0,0,0] * self.numLEDs # Pixel buffer
         self.spi = spidev.SpiDev()  # Init the SPI device
         self.spi.open(0, 1)  # Open SPI port 0, slave device (CS)  1
         self.spi.max_speed_hz=8000000 # Up the speed a bit, so that the LEDs are painted faster
@@ -117,11 +129,19 @@ class APA102:
         if ledNum >= self.numLEDs:
             return # again, invsible
 
+        # Set brightness to globalBrightness if not set, otherwise check it is in range
         if brightness is None:
             brightness = self.globalBrightness
+        elif brightness > self.MAX_BRIGHTNESS:
+            brightness = self.MAX_BRIGHTNESS
+
+        # Calculate pixel brightness as a percentage of the set globalBrightness
+        # Round up to nearest integer as we expect some brightness unless set to 0
+        if (self.globalBrightness < self.MAX_BRIGHTNESS) and (brightness != 0):
+            brightness = ceil( (brightness / self.MAX_BRIGHTNESS) * self.globalBrightness)
 
         # LED startframe is three "1" bits, followed by 5 brightness bits
-        ledstart = (brightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
+        ledstart = (brightness & 0b00011111) | self.LED_START # Don't validate, just slash of extra bits
 
         startIndex = 4 * ledNum
         self.leds[startIndex] = ledstart
