@@ -169,7 +169,7 @@ class APA102:
     Green -> Red -> Blue -> Green
     """
     def wheel(self, wheelPos):
-        if wheelPos > 254: wheelPos = 254 # Safeguard
+        if wheelPos > 255: wheelPos = 255 # Safeguard
         if wheelPos < 85: # Green -> Red
             return self.combineColor(wheelPos * 3, 255 - wheelPos * 3, 0)
         elif wheelPos < 170: # Red -> Blue
