@@ -1,4 +1,5 @@
 import spidev
+import math
 
 """
 Driver for APA102 LEDS (aka "DotStar").
@@ -146,7 +147,11 @@ class APA102:
     """
     def show(self):
         self.clockStartFrame()
-        self.spi.xfer2(self.leds) # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
+        for a in range(int(math.ceil(len(self.leds)/4096.0))):
+            final = ((a+1)*4096)-1
+            if final >= len(self.leds):
+                final = len(self.leds)-1
+            self.spi.xfer2(self.leds[a*4096:final]) # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs. 
         self.clockEndFrame()
 
     """
