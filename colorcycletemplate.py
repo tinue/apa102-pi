@@ -7,7 +7,7 @@ A specific color cycle must subclass this template, and implement at least the
 'update' method.
 """
 class ColorCycleTemplate:
-    def __init__(self, numLEDs, pauseValue = 0, numStepsPerCycle = 100, numCycles = -1, globalBrightness = 4, order = 'rgb'): # Init method
+    def __init__(self, numLEDs, pauseValue = 0, numStepsPerCycle = 100, numCycles = -1, globalBrightness = 4, order = 'rbg'): # Init method
         self.numLEDs = numLEDs # The number of LEDs in the strip
         self.pauseValue = pauseValue # How long to pause between two runs
         self.numStepsPerCycle = numStepsPerCycle # The number of steps in one cycle.
@@ -22,7 +22,7 @@ class ColorCycleTemplate:
     def init(self, strip, numLEDs):
     	  # The default does nothing. A particular subclass could setup variables, or
     	  # even light the strip in an initial color.
-    	  print('Init not implemented')
+          pass
 
     """
     void shutdown()
@@ -30,7 +30,7 @@ class ColorCycleTemplate:
     """
     def shutdown(self, strip, numLEDs):
         # The default does nothing
-        print('Shutdown not implemented')
+        pass
 
     """
     void update()
@@ -47,9 +47,7 @@ class ColorCycleTemplate:
     def cleanup(self, strip):
         self.shutdown(strip, self.numLEDs)
         strip.clearStrip()
-        print('Strip cleared')
         strip.cleanup()
-        print('SPI closed')
 
     """
     Start the actual work

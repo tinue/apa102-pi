@@ -146,7 +146,8 @@ class APA102:
     """
     def show(self):
         self.clockStartFrame()
-        self.spi.xfer2(self.leds) # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
+        # xfer2 kills the list, unfortunately. So it must be copied first
+        self.spi.xfer2(list(self.leds)) # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
         self.clockEndFrame()
 
     """
@@ -178,3 +179,10 @@ class APA102:
         else: # Blue -> Green
             wheelPos -= 170
             return self.combineColor(0, wheelPos * 3, 255 - wheelPos * 3);
+
+    """
+    void dumparray()
+    For debug purposes: Dump the LED array onto the console.
+    """
+    def dumparray(self):
+        print(self.leds)

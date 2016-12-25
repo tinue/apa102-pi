@@ -75,3 +75,4 @@ Make sure that your Raspberry Pi is working and has a network connection. Also m
 - 2015-12-17: Fixes for reported problems; Update all of the color samples; Decouple number of steps from number of LEDs
 - 2016-03-25: Merged changes from kapacuk: Allow stripes with different color coding than RGB
 - 2016-03-27: Merged 'rotate' method from kapacuk; Fixed errors from previous merge
+- 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
