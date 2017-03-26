@@ -54,7 +54,7 @@ to make it down the line to the last LED.
 rgb_map = { 'rgb': [3,2,1], 'rbg': [3,1,2], 'grb': [2,3,1], 'gbr': [2,1,3], 'brg': [1,3,2], 'bgr': [1,2,3] }
 
 class APA102:
-    def __init__(self, numLEDs, globalBrightness = 31, order='rgb'): # The number of LEDs in the Strip
+    def __init__(self, numLEDs, globalBrightness=31, order='rgb', bus=0, device=1, max_speed_hz=8000000): # The number of LEDs in the Strip
         self.numLEDs = numLEDs
         order = order.lower()
         self.rgb = rgb_map.get(order, rgb_map['rgb'])
@@ -62,8 +62,9 @@ class APA102:
         self.ledstart = (globalBrightness & 0b00011111) | 0b11100000 # Don't validate, just slash of extra bits
         self.leds = [self.ledstart,0,0,0] * self.numLEDs # Pixel buffer
         self.spi = spidev.SpiDev()  # Init the SPI device
-        self.spi.open(0, 1)  # Open SPI port 0, slave device (CS)  1
-        self.spi.max_speed_hz=8000000 # Up the speed a bit, so that the LEDs are painted faster
+        self.spi.open(bus, device)  # Open SPI port 0, slave device (CS)  1
+        if max_speed_hz:
+            self.spi.max_speed_hz=max_speed_hz # Up the speed a bit, so that the LEDs are painted faster
 
     """
     void clockStartFrame()
