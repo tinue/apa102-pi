@@ -20,9 +20,9 @@ class ColorCycleTemplate:
     This method is called to initialize a color program.
     """
     def init(self, strip, numLEDs):
-    	  # The default does nothing. A particular subclass could setup variables, or
-    	  # even light the strip in an initial color.
-          pass
+        # The default does nothing. A particular subclass could setup variables, or
+        # even light the strip in an initial color.
+        pass
 
     """
     void shutdown()
@@ -42,7 +42,7 @@ class ColorCycleTemplate:
     currentCycle: Starts with zero, and goes up by one whenever a full cycle has completed.
     """
     def update(self, strip, numLEDs, numStepsPerCycle, currentStep, currentCycle):
-    	  raise NotImplementedError("Please implement the update() method")
+        raise NotImplementedError("Please implement the update() method")
 
     def cleanup(self, strip):
         self.shutdown(strip, self.numLEDs)

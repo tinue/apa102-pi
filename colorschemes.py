@@ -26,7 +26,7 @@ class TheaterChase(ColorCycleTemplate):
         startIndex = currentStep % 7 # Each segment is 7 dots long: 2 blank, and 5 filled
         colorIndex = strip.wheel(int(round(255/numStepsPerCycle * currentStep, 0)))
         for pixel in range(numLEDs):
-        	  # Two LEDs out of 7 are blank. At each step, the blank ones move one pixel ahead.
+            # Two LEDs out of 7 are blank. At each step, the blank ones move one pixel ahead.
             if ((pixel+startIndex) % 7 == 0) or ((pixel+startIndex) % 7 == 1): strip.setPixelRGB(pixel, 0)
             else: strip.setPixelRGB(pixel, colorIndex)
         return 1
@@ -47,12 +47,12 @@ class RoundAndRound(ColorCycleTemplate):
 class Solid(ColorCycleTemplate):
 
     def init(self, strip, numLEDs):
-    	  for led in range(0, numLEDs):
-    	  	  strip.setPixelRGB(led,0xFFFFFF) # Paint white
+        for led in range(0, numLEDs):
+            strip.setPixelRGB(led,0xFFFFFF) # Paint white
 
     def update(self, strip, numLEDs, numStepsPerCycle, currentStep, currentCycle):
-    	  # Do nothing: Init lit the strip, and update just keeps it this way
-    	  return 0
+        # Do nothing: Init lit the strip, and update just keeps it this way
+        return 0
 
 
 class Rainbow(ColorCycleTemplate):

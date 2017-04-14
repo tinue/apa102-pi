@@ -2,7 +2,7 @@ import spidev
 
 """
 Driver for APA102 LEDS (aka "DotStar").
-(c) Martin Erzberger 2016
+(c) Martin Erzberger 2016-2017
 
 My very first Python code, so I am sure there is a lot to be optimized ;)
 

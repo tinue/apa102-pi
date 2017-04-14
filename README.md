@@ -13,13 +13,13 @@ The really nice part about the driver chip is this: Once it has received its own
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2016-02-09 version of Raspbian Jessie Lite).
+* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2017-04-10 version of Raspbian Jessie Lite).
 * SPI enabled and active (raspi-config, Advanced Options, SPI, Enable and load the module by default)
 * The SPI must be free and unused
 * A library named "spidev", Version 3. I used the one from here: https://github.com/doceme/py-spidev
 * Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install "spidev" with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
 
-Ideally, a 5$ Raspberry Pi Zero is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
+Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
 ## Wiring
 
@@ -53,7 +53,19 @@ Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W
 
 Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be installed manually. Of course, you can use the full raspbian jessie image and save yourself the installation steps.
 
-Make sure that your Raspberry Pi is working and has a network connection. Also make sure that your installation is current (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
+The more recent raspbian lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named "ssh" to enable SSH. To enable and configure WLAN, create a file named "wpa_supplicant.conf". It's content should be:
+
+```
+network={
+	ssid="Your_SSID"
+	psk="Your_Password"
+	key_mgmt=WPA-PSK
+}
+```
+
+After booting (wait a while: The Pi will boot twice, because after the first boot the SD card partition will be enlarged) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is "raspberry": Make sure to change it right away!
+
+Then, make sure that your installation is current (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
 - Activate SPI: sudo raspi-config; Go to "Advanced Options"; Go to "SPI"; Choose "Yes", "Ok", "Yes" again, "Ok" again, and then exit the tool and reboot
 - Install the git client: sudo apt-get install git
 - Prepare GIT: git config --global user.name "John Doe" && git config --global user.email johndoe@example.com
@@ -76,3 +88,4 @@ Make sure that your Raspberry Pi is working and has a network connection. Also m
 - 2016-03-25: Merged changes from kapacuk: Allow stripes with different color coding than RGB
 - 2016-03-27: Merged 'rotate' method from kapacuk; Fixed errors from previous merge
 - 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
+- 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
