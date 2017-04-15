@@ -1,72 +1,81 @@
-import apa102
+"""The module contains templates for colour cycles"""
 import time
+import apa102
 
-"""
-This class is the basis of all color cycles, such as rainbow or theater chase.
-A specific color cycle must subclass this template, and implement at least the
-'update' method.
-"""
 class ColorCycleTemplate:
-    def __init__(self, numLEDs, pauseValue = 0, numStepsPerCycle = 100, numCycles = -1, globalBrightness = 4, order = 'rbg'): # Init method
-        self.numLEDs = numLEDs # The number of LEDs in the strip
-        self.pauseValue = pauseValue # How long to pause between two runs
-        self.numStepsPerCycle = numStepsPerCycle # The number of steps in one cycle.
-        self.numCycles = numCycles # How many times will the program run
-        self.globalBrightness = globalBrightness # Brightness of the strip
+    """This class is the basis of all color cycles.
+
+    A specific color cycle must subclass this template, and implement at least the
+    'update' method.
+    """
+    def __init__(self, num_led, pause_value = 0, num_steps_per_cycle = 100,
+                 num_cycles = -1, global_brightness = 4, order = 'rbg'):
+        self.num_led = num_led # The number of LEDs in the strip
+        self.pause_value = pause_value # How long to pause between two runs
+        self.num_steps_per_cycle = num_steps_per_cycle # Steps in one cycle.
+        self.num_cycles = num_cycles # How many times will the program run
+        self.global_brightness = global_brightness # Brightness of the strip
         self.order = order # Strip colour ordering
 
-    """
-    void init()
-    This method is called to initialize a color program.
-    """
-    def init(self, strip, numLEDs):
-        # The default does nothing. A particular subclass could setup variables, or
-        # even light the strip in an initial color.
+    def init(self, strip, num_led):
+        """This method is called to initialize a color program.
+
+        The default does nothing. A particular subclass could setup
+        variables, or even light the strip in an initial color.
+        """
         pass
 
-    """
-    void shutdown()
-    This method is called at the end, when the light program should terminate
-    """
-    def shutdown(self, strip, numLEDs):
-        # The default does nothing
+    def shutdown(self, strip, num_led):
+        """This method is called before exiting.
+
+        The default does nothing
+        """
         pass
 
-    """
-    void update()
-    This method paints one subcycle. It must be implemented
-    currentStep: This goes from zero to numStepsPerCycle-1, and then back to zero. It is up to the subclass to define
-                 what is done in one cycle. One cycle could be one pass through the rainbow. Or it could
-                 be one pixel wandering through the entire strip (so for this case, the numStepsPerCycle should be
-                 equal to numLEDs).
-    currentCycle: Starts with zero, and goes up by one whenever a full cycle has completed.
-    """
-    def update(self, strip, numLEDs, numStepsPerCycle, currentStep, currentCycle):
+    def update(self, strip, num_led, num_steps_per_cycle, current_step,
+               current_cycle):
+        """This method paints one subcycle. It must be implemented.
+
+        current_step:  This goes from zero to numStepsPerCycle-1, and then
+          back to zero. It is up to the subclass to define what is done in
+          one cycle. One cycle could be one pass through the rainbow.
+          Or it could be one pixel wandering through the entire strip
+          (so for this case, the numStepsPerCycle should be equal to numLEDs).
+        current_cycle: Starts with zero, and goes up by one whenever a full
+          cycle has completed.
+        """
+
         raise NotImplementedError("Please implement the update() method")
 
     def cleanup(self, strip):
-        self.shutdown(strip, self.numLEDs)
-        strip.clearStrip()
+        """Cleanup method."""
+        self.shutdown(strip, self.num_led)
+        strip.clear_strip()
         strip.cleanup()
 
-    """
-    Start the actual work
-    """
+
     def start(self):
+        """This method does the actual work."""
         try:
-            strip = apa102.APA102(numLEDs=self.numLEDs, globalBrightness=self.globalBrightness, order=self.order) # Initialize the strip
-            strip.clearStrip()
-            self.init(strip, self.numLEDs) # Call the subclasses init method
+            strip = apa102.APA102(num_led=self.num_led,
+                                  global_brightness=self.global_brightness,
+                                  order=self.order) # Initialize the strip
+            strip.clear_strip()
+            self.init(strip, self.num_led) # Call the subclasses init method
             strip.show()
-            currentCycle = 0
-            while True:  # Loop forever (no 'for' here due to the possibility of infinite loops)
-                for currentStep in range (self.numStepsPerCycle):
-                    needRepaint = self.update(strip, self.numLEDs, self.numStepsPerCycle, currentStep, currentCycle) # Call the subclasses update method
-                    if (needRepaint): strip.show() # Display, only if required
-                    time.sleep(self.pauseValue) # Pause until the next step
-                currentCycle += 1
-                if (self.numCycles != -1):
-                    if (currentCycle >= self.numCycles): break
+            current_cycle = 0
+            while True:  # Loop forever
+                for current_step in range (self.num_steps_per_cycle):
+                    need_repaint = self.update(strip, self.num_led,
+                                               self.num_steps_per_cycle,
+                                               current_step, current_cycle)
+                    if need_repaint:
+                        strip.show() # repaint if required
+                    time.sleep(self.pause_value) # Pause until the next step
+                current_cycle += 1
+                if self.num_cycles != -1:
+                    if current_cycle >= self.num_cycles:
+                        break
             # Finished, cleanup everything
             self.cleanup(strip)
 
