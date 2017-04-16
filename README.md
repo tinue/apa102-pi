@@ -85,4 +85,4 @@ Then, update your installation (sudo apt-get update and sudo apt-get upgrade). T
 - 2016-03-27: Merged 'rotate' method from kapacuk; Fixed errors from previous merge
 - 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
-- 2017-04-17: Update code to better comply with the Python style guide (PEP 8)
+- 2017-04-16: Update code to better comply with the Python style guide (PEP 8)
