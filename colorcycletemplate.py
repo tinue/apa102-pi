@@ -9,7 +9,7 @@ class ColorCycleTemplate:
     'update' method.
     """
     def __init__(self, num_led, pause_value = 0, num_steps_per_cycle = 100,
-                 num_cycles = -1, global_brightness = 4, order = 'rbg'):
+                 num_cycles = -1, global_brightness = 255, order = 'rbg'):
         self.num_led = num_led # The number of LEDs in the strip
         self.pause_value = pause_value # How long to pause between two runs
         self.num_steps_per_cycle = num_steps_per_cycle # Steps in one cycle.

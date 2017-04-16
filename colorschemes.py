@@ -48,11 +48,12 @@ class TheaterChase(ColorCycleTemplate):
 
 
 class RoundAndRound(ColorCycleTemplate):
-    """Runs two LEDs around the strip."""
+    """Runs three LEDs around the strip."""
 
     def init(self, strip, num_led):
         strip.set_pixel_rgb(0, 0xFF0000)
-        strip.set_pixel_rgb(1, 0x00FF00)
+        strip.set_pixel_rgb(1, 0xFF0000, 5) # Only 5% brightness
+        strip.set_pixel_rgb(2, 0xFF0000)
 
     def update(self, strip, num_led, num_steps_per_cycle, current_step,
                current_cycle):
@@ -66,7 +67,7 @@ class Solid(ColorCycleTemplate):
 
     def init(self, strip, num_led):
         for led in range(0, num_led):
-            strip.set_pixel_rgb(led,0xFFFFFF) # Paint white
+            strip.set_pixel_rgb(led,0xFFFFFF,5) # Paint 5% white
 
     def update(self, strip, num_led, num_steps_per_cycle, current_step,
                current_cycle):

@@ -1,5 +1,6 @@
 """This is the main driver module for APA102 LEDs"""
 import spidev
+from math import ceil
 
 RGB_MAP = { 'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
             'gbr': [2, 1, 3], 'brg': [1, 3, 2], 'bgr': [1, 2, 3] }
@@ -66,15 +67,22 @@ class APA102:
     zeroes to LED 1 as long as it takes for the last color frame to make it
     down the line to the last LED.
     """
-    def __init__(self, num_led, global_brightness=31, order='rgb', bus=0,
-                 device=1, max_speed_hz=8000000):
+    # Constants
+    MAX_BRIGHTNESS = 31 # Safeguard: Set to a value appropriate for your setup
+    LED_START = 0b11100000 # Three "1" bits, followed by 5 brightness bits
+
+    def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
+                 order='rgb', bus=0, device=1, max_speed_hz=8000000):
         self.num_led = num_led  # The number of LEDs in the Strip
         order = order.lower()
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        # LED startframe is three "1" bits, followed by 5 brightness bits
-        # Don't validate, just slash of extra bits
-        self.ledstart = (global_brightness & 0b00011111) | 0b11100000
-        self.leds = [self.ledstart, 0, 0, 0] * self.num_led  # Pixel buffer
+        # Limit the brightness to the maximum if it's set higher
+        if global_brightness > self.MAX_BRIGHTNESS:
+            self.global_brightness = self.MAX_BRIGHTNESS
+        else:
+            self.global_brightness = global_brightness
+
+        self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
         self.spi = spidev.SpiDev()  # Init the SPI device
         self.spi.open(bus, device)  # Open SPI port 0, slave device (CS) 1
         # Up the speed a bit, so that the LEDs are painted faster
@@ -130,32 +138,44 @@ class APA102:
         self.show()
 
 
-    def set_pixel(self, led_num, red, green, blue):
+    def set_pixel(self, led_num, red, green, blue, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
 
         The changed pixel is not shown yet on the Stripe, it is only
         written to the pixel buffer. Colors are passed individually.
+        If brightness is not set the global brightness setting is used.
         """
         if led_num < 0:
             return  # Pixel is invisible, so ignore
         if led_num >= self.num_led:
             return  # again, invisible
+
+        # Calculate pixel brightness as a percentage of the
+        # defined global_brightness. Round up to nearest integer
+        # as we expect some brightness unless set to 0
+        brightness = ceil((bright_percent/100)*self.global_brightness)
+
+        # LED startframe is three "1" bits, followed by 5 brightness bits
+        ledstart = (brightness & 0b00011111) | self.LED_START
+
         start_index = 4 * led_num
-        self.leds[start_index] = self.ledstart
+        self.leds[start_index] = ledstart
         self.leds[start_index + self.rgb[0]] = red
         self.leds[start_index + self.rgb[1]] = green
         self.leds[start_index + self.rgb[2]] = blue
 
 
-    def set_pixel_rgb(self, led_num, rgb_color):
+    def set_pixel_rgb(self, led_num, rgb_color, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
 
         The changed pixel is not shown yet on the Stripe, it is only
         written to the pixel buffer.
         Colors are passed combined (3 bytes concatenated)
+        If brightness is not set the global brightness setting is used.
         """
         self.set_pixel(led_num, (rgb_color & 0xFF0000) >> 16,
-                       (rgb_color & 0x00FF00) >> 8, rgb_color & 0x0000FF)
+                       (rgb_color & 0x00FF00) >> 8, rgb_color & 0x0000FF,
+                        bright_percent)
 
 
     def rotate(self, positions=1):
