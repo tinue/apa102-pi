@@ -71,8 +71,8 @@ Then, update your installation (sudo apt-get update and sudo apt-get upgrade). T
 - Install the library: cd py-spidev-master && sudo python3 ./setup.py install
 - Create a development directory and change into it: mkdir ~/Development && cd ~/Development
 - Get the APA102 Library and sample light programs: git clone https://github.com/tinue/APA102_Pi.git
-- You might want to set the number of LEDs to match your strip: cd APA102_Pi && nano runColorCycle.py; Update the number, Ctrl-X and "Yes" to save.
-- Run the sample lightshow: python3 runColorCycle.py
+- You might want to set the number of LEDs to match your strip: cd APA102_Pi && nano runcolorcycle.py; Update the number, Ctrl-X and "Yes" to save.
+- Run the sample lightshow: python3 runcolorcycle.py
 
 
 
