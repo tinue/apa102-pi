@@ -1,7 +1,7 @@
 # APA102_Pi
 
 ## Introduction
-APA102_Pi is a pure python library to drive APA102 type LED strands. It is supposed to work on a Raspberry Pi, and is not tested on any other platform.
+APA102_Pi is a pure Python library to drive APA102 type LED strands. It is supposed to work on a Raspberry Pi, and is not tested on any other platform.
 
 APA102 LEDs are typically 5050 type LEDs with an additional driver chip per LED. The driver chip takes care of receiving the desired colour via its input lines, and then holding this colour until a new command is received.
 
@@ -14,7 +14,7 @@ The library is designed to take care of the details about sending colour command
 
 ## Prerequisites
 * A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2017-04-10 version of Raspbian Jessie Lite).
-* SPI enabled and active (raspi-config, Advanced Options, SPI, Enable and load the module by default)
+* SPI enabled and active (raspi-config, Interfacing Options, SPI, Enable).
 * The SPI must be free and unused
 * A library named "spidev", Version 3. I used the one from here: https://github.com/doceme/py-spidev
 * Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install "spidev" with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
@@ -22,7 +22,6 @@ The library is designed to take care of the details about sending colour command
 Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
 ## Wiring
-
 The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
 
 Without a level shifter, the wiring is very simple:
@@ -42,18 +41,16 @@ And here it is, the finished contraption running a "rainbow" program:
 
 ![Raspberry Pi Zero driving APA102 LEDs](Finished.jpg)
 
-Plugged into the USB port is a WLAN stick. This way I can reprogram the light show from my desk, even if the strips are installed outside as a christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
+Plugged into the USB port is a WLAN stick. This way I can reprogram the light show from my desk, even if the strips are installed outside as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
 
 ## Video of the installation
-
-Videos can't be embedded yet, so head over to youtube: https://youtu.be/N0MK1z8W-1U
+Videos can't be embedded yet, so head over to Youtube: https://youtu.be/N0MK1z8W-1U
 
 
 ## Quick setup
+Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be added manually. Of course, you can use the full Raspbian Jessie image and save yourself the installation steps.
 
-Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be installed manually. Of course, you can use the full raspbian jessie image and save yourself the installation steps.
-
-The more recent raspbian lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named "ssh" to enable SSH. To enable and configure WLAN, create a file named "wpa_supplicant.conf". It's content should be:
+The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named "ssh" to enable SSH. To enable and configure WLAN, create a file named "wpa_supplicant.conf". It's content should be:
 
 ```
 network={
@@ -63,10 +60,10 @@ network={
 }
 ```
 
-After booting (wait a while: The Pi will boot twice, because after the first boot the SD card partition will be enlarged) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is "raspberry": Make sure to change it right away!
+After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is "raspberry": Make sure to change it right away!
 
-Then, make sure that your installation is current (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
-- Activate SPI: sudo raspi-config; Go to "Advanced Options"; Go to "SPI"; Choose "Yes", "Ok", "Yes" again, "Ok" again, and then exit the tool and reboot
+Then, update your installation (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
+- Activate SPI: sudo raspi-config; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot
 - Install the git client: sudo apt-get install git
 - Prepare GIT: git config --global user.name "John Doe" && git config --global user.email johndoe@example.com
 - Install Python 3: sudo apt-get install python3 && sudo apt-get install python3-dev
@@ -80,7 +77,6 @@ Then, make sure that your installation is current (sudo apt-get update and sudo 
 
 
 ## Release history
-
 - 2015-04-13: Initial version
 - 2015-12-04: Add documentation
 - 2015-12-11: Rewrote the examples, driver itself is unchanged
@@ -89,3 +85,4 @@ Then, make sure that your installation is current (sudo apt-get update and sudo 
 - 2016-03-27: Merged 'rotate' method from kapacuk; Fixed errors from previous merge
 - 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
+- 2017-04-17: Update code to better comply with the Python style guide (PEP 8)
