@@ -63,16 +63,16 @@ network={
 After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is "raspberry": Make sure to change it right away!
 
 Then, update your installation (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and runnig:
-- Activate SPI: sudo raspi-config; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot
-- Install the git client: sudo apt-get install git
-- Prepare GIT: git config --global user.name "John Doe" && git config --global user.email johndoe@example.com
-- Install Python 3: sudo apt-get install python3 && sudo apt-get install python3-dev
-- Fetch the spidev library: cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip
-- Install the library: cd py-spidev-master && sudo python3 ./setup.py install
-- Create a development directory and change into it: mkdir ~/Development && cd ~/Development
-- Get the APA102 Library and sample light programs: git clone https://github.com/tinue/APA102_Pi.git
-- You might want to set the number of LEDs to match your strip: cd APA102_Pi && nano runcolorcycle.py; Update the number, Ctrl-X and "Yes" to save.
-- Run the sample lightshow: python3 runcolorcycle.py
+- Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot
+- Install the git client: `sudo apt-get install git`
+- Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`
+- Install Python 3: `sudo apt-get install python3 && sudo apt-get install python3-dev`
+- Fetch the spidev library: `cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip`
+- Install the library: `cd py-spidev-master && sudo python3 ./setup.py install`
+- Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`
+- Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`
+- You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.
+- Run the sample lightshow: `python3 runcolorcycle.py`
 
 
 
