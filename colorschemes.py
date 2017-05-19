@@ -17,9 +17,11 @@ class StrandTest(ColorCycleTemplate):
             self.color >>= 8  # Red->green->blue->black
         if self.color == 0:
             self.color = 0xFF0000  # If black, reset to red
-
+        len = 9
+        if num_led - 1 < len:
+            len = num_led - 1 
         # The head pixel that will be turned on in this cycle
-        head = (current_step + 9) % num_steps_per_cycle
+        head = (current_step + len) % num_steps_per_cycle
         tail = current_step # The tail pixel that will be turned off
         strip.set_pixel_rgb(head, self.color)  # Paint head
         strip.set_pixel_rgb(tail, 0)  # Clear tail
