@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Sample script to run a few colour tests on the strip."""
 import colorschemes
 
