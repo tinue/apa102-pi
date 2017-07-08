@@ -51,13 +51,13 @@ Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. T
 
 The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named `ssh` to enable SSH. To enable and configure WLAN, create a file named `wpa_supplicant.conf`. It's content should be:
 ```
-`network={
+network={
   ssid="Your_SSID"
   psk="Your_Password"
   key_mgmt=WPA-PSK
 }
 ```
-`
+
 After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is `raspberry`: Make sure to change it right away!
 
 Then, update your installation (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and running:
