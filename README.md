@@ -24,9 +24,9 @@ Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs.
 ## Wiring
 The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
 
-Without a level shifter, the wiring is very simple:
-- LED ground to one of the Raspberry ground pins
-- LED Data to Raspberry SPI MOSI
+Without a level shifter, the wiring is very simple:  
+- LED ground to one of the Raspberry ground pins  
+- LED Data to Raspberry SPI MOSI  
 - LED Clock to Raspberry SPI SCLK
 
 The LED stripe uses a lot of power. If you try to power the LEDs from the Raspberry Pi, you will most likely immediately kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
@@ -49,16 +49,19 @@ Videos can't be embedded yet, so head over to Youtube: [https://youtu.be/N0MK1z8
 ## Quick setup
 Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be added manually. Of course, you can use the full Raspbian Jessie image and save yourself the installation steps.
 
-The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named `ssh` to enable SSH. To enable and configure WLAN, create a file named `wpa_supplicant.conf`. It's content should be:
-```
-network={
-  ssid="Your_SSID"
-  psk="Your_Password"
-  key_mgmt=WPA-PSK
-}
-```
+The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named `ssh` to enable SSH. To enable and configure WLAN, create a file named `wpa_supplicant.conf`. Its content should be:  
 
-After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is `raspberry`: Make sure to change it right away!
+	country=CH
+	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+	update_config=1
+	
+	network={
+		ssid="Your_SSID"
+		psk="Your_Password"
+		key_mgmt=WPA-PSK
+	}
+
+Of course, use the correct country and ssid/psk. After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is `raspberry`: Make sure to change it right away!
 
 Then, update your installation (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and running:
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot
