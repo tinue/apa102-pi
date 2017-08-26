@@ -24,7 +24,8 @@ Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs.
 ## Wiring
 The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
 
-Without a level shifter, the wiring is very simple:  
+Without a level shifter, the wiring is very simple:
+
 - LED ground to one of the Raspberry ground pins  
 - LED Data to Raspberry SPI MOSI  
 - LED Clock to Raspberry SPI SCLK
@@ -35,11 +36,11 @@ Having said this, you *can* power the Raspberry from the same power supply as th
 
 All combined, this is my extremely low-tech wiring diagram:
 
-![Wiring Diagram][image-1]
+![Wiring Diagram](Wiring.jpg)
 
 And here it is, the finished contraption running a "rainbow" program:
 
-![Raspberry Pi Zero driving APA102 LEDs][image-2]
+![Raspberry Pi Zero driving APA102 LEDs](Finished.jpg)
 
 Plugged into the USB port is a WLAN stick. This way I can reprogram the light show from my desk, even if the strips are installed outside as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
 
@@ -61,18 +62,19 @@ The more recent Raspbian Lite images can easily be set-up to run headless from t
 		key_mgmt=WPA-PSK
 	}
 
-Of course, use the correct country and ssid/psk. After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: ssh pi@raspberrypi.local. The initial password is `raspberry`: Make sure to change it right away!
+Of course, use the correct country and ssid/psk. After booting (be patient: The Pi will initially boot twice) you can SSH into the Raspberry Pi: `ssh pi@raspberrypi.local`. The initial password is `raspberry`: Make sure to change it right away!
 
 Then, update your installation (sudo apt-get update and sudo apt-get upgrade). This is what you then need to do in order to get the library up and running:
-- Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot
-- Install the git client: `sudo apt-get install -y git`
-- Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`
-- Install Python 3: `sudo apt-get install -y python3 python3-dev`
-- Fetch the spidev library: `cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip`
-- Install the library: `cd py-spidev-master && sudo python3 ./setup.py install`
-- Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`
-- Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`
-- You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.
+
+- Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot  
+- Install the git client: `sudo apt-get install -y git`  
+- Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
+- Install Python 3: `sudo apt-get install -y python3 python3-dev`  
+- Fetch the spidev library: `cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip`  
+- Install the library: `cd py-spidev-master && sudo python3 ./setup.py install`  
+- Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
+- Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
+- You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `python3 runcolorcycle.py`
 
 ## Release history
@@ -85,8 +87,4 @@ Then, update your installation (sudo apt-get update and sudo apt-get upgrade). T
 - 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
-
-
-
-[image-1]:	Wiring.jpg
-[image-2]:	Finished.jpg
+- Test with Raspbian Stretch; Update Readme.
