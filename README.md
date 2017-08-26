@@ -22,7 +22,7 @@ The library is designed to take care of the details about sending colour command
 Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
 ## Wiring
-The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
+The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. Therefore it's possible that the 3.3 Volt SPI signal is not being recognized by the LED driver chips. To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal. You will not damage the Raspberry Pi if you don't use a level shifter, because the Raspberry Pi determines the voltage of MOSI and SCLK.
 
 Without a level shifter, the wiring is very simple:
 
@@ -32,7 +32,7 @@ Without a level shifter, the wiring is very simple:
 
 Note that the "Chip Select" line (CE0 or CE1) is not used. The APA102 chip always accepts data, and cannot be switched off. Therefore, the APA102 strip must be the only SPI device on the Raspberry Pi.
 
-The LED strip uses a lot of power. If you try to power the LEDs through the Raspberry Pi, you will most likely immediately kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
+The LED strip uses a lot of power. If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
 
 Having said this, you *can* power the Raspberry from the same power supply as the LED stripes (instead of using an extra USB power supply). If you decide to do this, make sure to never power the Raspberry Pi from its USB power supply, or you risk that the LEDs try to take power from the Raspberry.
 
@@ -44,15 +44,15 @@ And here it is, the finished contraption running a "rainbow" program:
 
 ![Raspberry Pi Zero driving APA102 LEDs](Finished.jpg)
 
-Plugged into the USB port is a WLAN stick (when I took the picture, I used a Raspberry Pi Zero; Since then, I switched to the Raspberry Pi Zero W). This way I can reprogram the light show from my desk, even if the strips are installed outside as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
+Plugged into the USB port is a WLAN stick (nowadays I would rather use a Raspberry Pi Zero W, of course). This way I can reprogram the light show from my desk, even if the strips are installed outside as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
 
 ## Video of the installation
 Videos can't be embedded yet, so head over to Youtube: [https://youtu.be/N0MK1z8W-1U]()
 
 ## Quick setup
-Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be added manually. Of course, you can use the full Raspbian Stretch image and save yourself the installation steps.
+Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be added manually. Of course, you can use the full Raspbian Stretch image and save yourself some of the installation steps.
 
-The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named `ssh` to enable SSH. To enable and configure WLAN, create a file named `wpa_supplicant.conf`. Its content should be:  
+The more recent Raspbian Lite images can easily be set-up to run headless from the start. After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory, and create an empty file named `ssh` to enable SSH. On a Mac you would do this: `touch /Volumes/boot/ssh`. To enable and configure WLAN, create a file named `wpa_supplicant.conf`. Its content should be:  
 
 	country=CH
 	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -77,7 +77,7 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
 - You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
-- Run the sample lightshow: `python3 runcolorcycle.py`
+- Run the sample lightshow: `./runcolorcycle.py`
 
 ## Release history
 - 2015-04-13: Initial version
@@ -89,4 +89,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2016-12-25: Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
-- 2017-08-26: Test with Raspbian Stretch; Update Readme.
+- 2017-08-26: Tested with Raspbian Stretch; Update Readme.
