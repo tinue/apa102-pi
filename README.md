@@ -47,7 +47,7 @@ And here it is, the finished contraption running a "rainbow" program:
 Plugged into the USB port is a WLAN stick (nowadays I would rather use a Raspberry Pi Zero W, of course). This way I can reprogram the light show from my desk, even if the strips are installed outside as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has to take the Arduino inside, or a laptop outside.
 
 ## Video of the installation
-Videos can't be embedded yet, so head over to Youtube: [https://youtu.be/N0MK1z8W-1U]()
+Videos can't be embedded yet, [so head over to YouTube](https://youtu.be/N0MK1z8W-1U).
 
 ## Quick setup
 Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used. This image only contains the bare minimum of packages, therefore some packages have be added manually. Of course, you can use the full Raspbian Stretch image and save yourself some of the installation steps.
@@ -57,7 +57,7 @@ The more recent Raspbian Lite images can easily be set-up to run headless from t
 	country=CH
 	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 	update_config=1
-	
+
 	network={
 		ssid="Your_SSID"
 		psk="Your_Password"
