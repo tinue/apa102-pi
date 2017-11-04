@@ -12,8 +12,6 @@ class APA102:
 
     (c) Martin Erzberger 2016-2017
 
-    My very first Python code, so I am sure there is a lot to be optimized ;)
-
     Public methods are:
      - set_pixel
      - set_pixel_rgb
@@ -76,8 +74,6 @@ class APA102:
                  order='rgb', bus=0, device=1, max_speed_hz=8000000):
         """Initializes the library.
         
-        bus and device are totally useless, because the APA102 LEDs do not have
-        a Chip Select line. I'll remove them later from the init.
         """
         self.num_led = num_led  # The number of LEDs in the Strip
         order = order.lower()
@@ -90,10 +86,6 @@ class APA102:
 
         self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
         self.spi = SPI.SpiDev(bus, device, max_speed_hz)  # Init the SPI device
-        # self.spi.open(bus, device)  # Open SPI port 0, slave device (CS) 1
-        # Up the speed a bit, so that the LEDs are painted faster
-        #if max_speed_hz:
-        #    self.spi.max_speed_hz = max_speed_hz
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.

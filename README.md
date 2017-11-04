@@ -16,8 +16,8 @@ The library is designed to take care of the details about sending colour command
 * A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2017-08-16 version of Raspbian Stretch Lite).
 * SPI enabled and active (`raspi-config`, Interfacing Options, SPI, Enable).
 * The SPI must be free and unused.
-* A library named `spidev`, Version 3. I used the one from here: [https://github.com/doceme/py-spidev]().
-* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install "spidev" with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
+* The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO) 
+* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install the Adafruit_Python_GPIO with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
 
 Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
@@ -71,9 +71,9 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot  
 - Install the git client: `sudo apt-get install -y git`  
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
-- Install Python 3: `sudo apt-get install -y python3 python3-dev`  
-- Fetch the spidev library: `cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip`  
-- Install the library: `cd py-spidev-master && sudo python3 ./setup.py install`  
+- Install Python 3: `sudo apt-get install -y python3 python3-dev python3-pip python3-smbus build-essential`  
+- Fetch the Adafruit_Python_GPIO library: `cd /tmp && wget https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip && unzip Adafruit_Python_GPIO-master.zip`  
+- Install the library: `cd Adafruit_Python_GPIO-master && sudo python3 ./setup.py install`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
 - You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
@@ -90,4 +90,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
 - 2017-08-26: Tested with Raspbian Stretch; Update Readme.
-- 2017-11-04: Trying out an alternative SPI library from Adafruit to support APA102 devices that do not use hardware SPI (for example the Pimoroni Blinkt! LED bar).
+- 2017-11-04: Trying out an alternative SPI library from Adafruit to eventually support APA102 devices that do not use hardware SPI (for example the Pimoroni Blinkt! LED bar).
