@@ -85,7 +85,12 @@ class APA102:
             self.global_brightness = global_brightness
 
         self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
-        self.spi = SPI.SpiDev(bus, device, max_speed_hz)  # Init the SPI device
+        # Here the desired hardware must b e configured. A few samples are provided.
+        # Uncomment just one of them!
+        # Hardware SPI, use with an LED strip wired as in the README
+        self.spi = SPI.SpiDev(bus, device, max_speed_hz)
+        # Pimoroni Phat Beat or Blinkt! Uses BCM 23 for MOSI and BCM 24 for SCLK
+        # self.spi = SPI.BitBang(GPIO.get_platform_gpio(), 24, 23)
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.

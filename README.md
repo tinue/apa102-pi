@@ -71,8 +71,8 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot  
 - Install the git client: `sudo apt-get install -y git`  
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
-- Install Python 3: `sudo apt-get install -y python3 python3-dev python3-pip python3-smbus build-essential`  
-- Fetch the Adafruit_Python_GPIO library: `cd /tmp && wget https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip && unzip Adafruit_Python_GPIO-master.zip`  
+- Install Python 3: `sudo apt-get install -y python3 python3-dev python3-pip python3-smbus python3-rpi.gpio build-essential`  
+- Fetch the Adafruit_Python_GPIO library: `cd /tmp && wget https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip && unzip master.zip`  
 - Install the library: `cd Adafruit_Python_GPIO-master && sudo python3 ./setup.py install`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
