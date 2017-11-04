@@ -90,3 +90,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
 - 2017-08-26: Tested with Raspbian Stretch; Update Readme.
+- 2017-11-04: Trying out an alternative SPI library from Adafruit to support APA102 devices that do not use hardware SPI (for example the Pimoroni Blinkt! LED bar).
