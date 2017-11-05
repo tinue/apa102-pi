@@ -67,11 +67,11 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 31 # Safeguard: Set to a value appropriate for your setup
+    MAX_BRIGHTNESS = 31 # Safeguard: Max. brightness that can be selected. 
     LED_START = 0b11100000 # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', bus=0, device=1, max_speed_hz=8000000):
+                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000):
         """Initializes the library.
         
         """
@@ -85,12 +85,12 @@ class APA102:
             self.global_brightness = global_brightness
 
         self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
-        # Here the desired hardware must b e configured. A few samples are provided.
-        # Uncomment just one of them!
-        # Hardware SPI, use with an LED strip wired as in the README
-        self.spi = SPI.SpiDev(bus, device, max_speed_hz)
-        # Pimoroni Phat Beat or Blinkt! Uses BCM 23 for MOSI and BCM 24 for SCLK
-        # self.spi = SPI.BitBang(GPIO.get_platform_gpio(), 24, 23)
+        
+        # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
+        if mosi == 10 and sclk == 11:
+        	self.spi = SPI.SpiDev(0, 0, max_speed_hz) # Bus 0, chip select 0
+        else:
+        	self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi)
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.
