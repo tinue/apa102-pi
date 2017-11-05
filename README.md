@@ -13,11 +13,11 @@ The really nice part about the driver chip is this: Once it has received its own
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2017-08-16 version of Raspbian Stretch Lite).
-* SPI enabled and active (`raspi-config`, Interfacing Options, SPI, Enable).
-* The SPI must be free and unused.
-* A library named `spidev`, Version 3. I used the one from here: [https://github.com/doceme/py-spidev]().
-* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install "spidev" with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
+* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2017-09-07 version of Raspbian Stretch Lite).
+* If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, Enable); The SPI must be free and unused.
+* For software SPI (bit bang mode): Two free GPIO pins
+* The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO) 
+* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. Note that you need to install the Adafruit_Python_GPIO with Python 3! If you install with Python 2, then the library is invisible for Python 3 applications.
 
 Ideally, a 10$ Raspberry Pi Zero W is dedicated to the task of driving the LEDs. The connector to the LED stripe can be soldered directly to the correct ports on the board.
 
@@ -32,7 +32,7 @@ Without a level shifter, the wiring is very simple:
 
 Note that the "Chip Select" line (CE0 or CE1) is not used. The APA102 chip always accepts data, and cannot be switched off. Therefore, the APA102 strip must be the only SPI device on the Raspberry Pi.
 
-The LED strip uses a lot of power. If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
+The LED strip uses a lot of power (roughly 20mA per LED, i.e. 60mA for one bright white dot). If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
 
 Having said this, you *can* power the Raspberry from the same power supply as the LED stripes (instead of using an extra USB power supply). If you decide to do this, make sure to never power the Raspberry Pi from its USB power supply, or you risk that the LEDs try to take power from the Raspberry.
 
@@ -71,13 +71,13 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI; Exit exit the tool and reboot  
 - Install the git client: `sudo apt-get install -y git`  
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
-- Install Python 3: `sudo apt-get install -y python3 python3-dev`  
-- Fetch the spidev library: `cd /tmp && wget https://github.com/doceme/py-spidev/archive/master.zip && unzip master.zip`  
-- Install the library: `cd py-spidev-master && sudo python3 ./setup.py install`  
+- Install Python 3 and some packages required by the Adafruit library: `sudo apt-get install -y python3 python3-dev python3-pip python3-smbus python3-rpi.gpio build-essential`  
+- Fetch the Adafruit_Python_GPIO library: `cd /tmp && wget https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip && unzip master.zip`  
+- Install the library: `cd Adafruit_Python_GPIO-master && sudo python3 ./setup.py install`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
 - You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
-- Run the sample lightshow: `./runcolorcycle.py`
+- Run the sample lightshow: `./runcolorcycle.py`.
 
 ## Release history
 - 2015-04-13: Initial version
@@ -90,3 +90,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2017-04-14: Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
 - 2017-08-26: Tested with Raspbian Stretch; Update Readme.
+- 2017-11-05: Exchanged the SPI library to Adafruit_Python_GPIO. This allows to support devices that do not use hardware SPI, for example the Pimoroni Blinkt! or the Phat Beat.
