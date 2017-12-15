@@ -9,7 +9,7 @@ Depending on where these LEDs are bought, they might be called "APA102", "Superl
 
 The really nice part about the driver chip is this: Once it has received its own colour command, it forwards any further colour commands from its input to its output lines. This allows to easily chain multiple LEDs together. Colour command #1 lights the first LED, command #2 the next LED, etc. Sending e.g. 300 colour commands lights an entire 5 Meter, 60 LEDs per Meter strip.
 
-Some APA102 pictures are available here: [https://www.iot-projekte.ch/apa102-led-part-1-pictures]()
+Some APA102 pictures are available [here](https://www.iot-projekte.ch/apa102-led-part-1-pictures)
 ## Purpose
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
