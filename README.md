@@ -96,3 +96,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2017-04-16: Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
 - 2017-08-26: Tested with Raspbian Stretch; Update Readme.
 - 2017-11-05: Exchanged the SPI library to Adafruit_Python_GPIO. This allows to support devices that do not use hardware SPI, for example the Pimoroni Blinkt! or the Phat Beat.
+- 2018-01-19: Tiny release: Added a sample
