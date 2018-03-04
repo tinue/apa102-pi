@@ -44,8 +44,8 @@ class TheaterChase(ColorCycleTemplate):
             # Two LEDs out of 7 are blank. At each step, the blank
             # ones move one pixel ahead.
             if ((pixel+start_index) % 7 == 0) or ((pixel+start_index) % 7 == 1):
-                strip.set_pixel_rgb(pixel, 0)
-            else: strip.set_pixel_rgb(pixel, color_index)
+                strip.set_pixel_rgb(pixel, 0, strip.MAX_BRIGHTNESS)
+            else: strip.set_pixel_rgb(pixel, color_index, strip.MAX_BRIGHTNESS)
         return 1
 
 
@@ -99,5 +99,5 @@ class Rainbow(ColorCycleTemplate):
             led_index_rounded_wrapped = int(round(led_index, 0)) % 255
             # Get the actual color out of the wheel
             pixel_color = strip.wheel(led_index_rounded_wrapped)
-            strip.set_pixel_rgb(i, pixel_color)
+            strip.set_pixel_rgb(i, pixel_color, strip.MAX_BRIGHTNESS)
         return 1 # All pixels are set in the buffer, so repaint the strip now

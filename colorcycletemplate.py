@@ -87,3 +87,4 @@ class ColorCycleTemplate:
         except KeyboardInterrupt:  # Ctrl-C can halt the light program
             print('Interrupted...')
             self.cleanup(strip)
+            raise
