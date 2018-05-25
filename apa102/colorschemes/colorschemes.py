@@ -1,8 +1,8 @@
 """This module contains a few concrete colour cycles to play with"""
 
-from colorcycletemplate import ColorCycleTemplate
+from apa102.driver import colorcycletemplate
 
-class StrandTest(ColorCycleTemplate):
+class StrandTest(colorcycletemplate.ColorCycleTemplate):
     """Runs a simple strand test (9 LEDs wander through the strip)."""
 
     color = None
@@ -31,7 +31,7 @@ class StrandTest(ColorCycleTemplate):
         return 1 # Repaint is necessary
 
 
-class TheaterChase(ColorCycleTemplate):
+class TheaterChase(colorcycletemplate.ColorCycleTemplate):
     """Runs a 'marquee' effect around the strip."""
     def update(self, strip, num_led, num_steps_per_cycle, current_step,
                current_cycle):
@@ -51,7 +51,7 @@ class TheaterChase(ColorCycleTemplate):
         return 1
 
 
-class RoundAndRound(ColorCycleTemplate):
+class RoundAndRound(colorcycletemplate.ColorCycleTemplate):
     """Runs three LEDs around the strip."""
 
     def init(self, strip, num_led):
@@ -66,7 +66,7 @@ class RoundAndRound(ColorCycleTemplate):
         return 1
 
 
-class Solid(ColorCycleTemplate):
+class Solid(colorcycletemplate.ColorCycleTemplate):
     """Paints the strip with one colour."""
 
     def update(self, strip, num_led, num_steps_per_cycle, current_step,
@@ -84,7 +84,7 @@ class Solid(ColorCycleTemplate):
         return 1
 
 
-class Rainbow(ColorCycleTemplate):
+class Rainbow(colorcycletemplate.ColorCycleTemplate):
     """Paints a rainbow effect across the entire strip."""
     def update(self, strip, num_led, num_steps_per_cycle, current_step,
                current_cycle):
