@@ -3,4 +3,4 @@
 /.pydevproject
 /__pycache__
 /*.pyc
-
+/.settings
