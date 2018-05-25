@@ -14,7 +14,7 @@ Some APA102 pictures are available [here](https://www.iot-projekte.ch/apa102-led
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2018-04-18version of Raspbian Stretch Lite).
+* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2018-04-18 version of Raspbian Stretch Lite).
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, Enable); The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
 * The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO) 
