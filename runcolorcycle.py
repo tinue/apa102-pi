@@ -4,7 +4,7 @@ import colorschemes
 
 NUM_LED = 430
 
-# One Cycle with one step and a pause of theee seconds. Hence three seconds of white light
+# One Cycle with one step and a pause of three seconds. Hence three seconds of white light
 print('Three Seconds of white light')
 MY_CYCLE = colorschemes.Solid(num_led=NUM_LED, pause_value=3,
                              num_steps_per_cycle=1, num_cycles=1)

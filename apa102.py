@@ -10,7 +10,7 @@ class APA102:
     """
     Driver for APA102 LEDS (aka "DotStar").
 
-    (c) Martin Erzberger 2016-2017
+    (c) Martin Erzberger 2016-2018
 
     Public methods are:
      - set_pixel
@@ -24,7 +24,7 @@ class APA102:
      - wheel
 
     The rest of the methods are used internally and should not be used by the
-    user of the library.
+    user of the library. This file is the main driver, and is usually used "as is".
 
     Very brief overview of APA102: An APA102 LED is addressed with SPI. The bits
     are shifted in one by one, starting with the least significant bit.
