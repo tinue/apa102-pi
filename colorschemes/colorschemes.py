@@ -1,6 +1,6 @@
 """This module contains a few concrete colour cycles to play with"""
 
-from apa102.driver import colorcycletemplate
+from driver import colorcycletemplate
 
 class StrandTest(colorcycletemplate.ColorCycleTemplate):
     """Runs a simple strand test (9 LEDs wander through the strip)."""

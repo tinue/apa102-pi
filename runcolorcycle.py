@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Sample script to run a few colour tests on the strip."""
-from apa102.colorschemes import colorschemes
+from colorschemes import colorschemes
 
 NUM_LED = 430
 

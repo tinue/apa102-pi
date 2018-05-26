@@ -19,6 +19,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/tinue/APA102_Pi",
+    python_requires='>3',
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
@@ -27,5 +28,6 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: Education",
         "Topic :: System :: Hardware :: Hardware Drivers",
-    )
+    ),
+    platforms=("Raspbian Stretch")
 )
