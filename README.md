@@ -84,6 +84,14 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
 
+## Use the APA102 project as a library
+If you want to use the APA102 library in your own projects, you will have to install it onto the Raspberry Pi. This is simple:
+
+ - Make sure to be in the project root directory: `cd ~/Development/APA102_Pi`
+ - Install the library (the dot at the end is necessary!) `sudo pip3 install .`
+ 
+ To test, copy one of the test scripts away from the APA102 directory, e.g. directly to your home. If you can run the library from home without an error message, then the library is available system-wide.
+
 ## Release history
 - 2015-04-13: Initial version
 - 2015-12-04: Add documentation
@@ -98,3 +106,4 @@ Then, update your installation (`sudo apt-get update && sudo apt-get -y upgrade`
 - 2017-11-05: Exchanged the SPI library to Adafruit_Python_GPIO. This allows to support devices that do not use hardware SPI, for example the Pimoroni Blinkt! or the Phat Beat.
 - 2018-01-19: Tiny release: Added a sample
 - 2018-05-25: No change in the driver; Slight restructuring of the templates and schemes to allow easier change of the SPI pins; Additional sample specific to the the Pimoroni Blinkt!
+- 2018-06-08: Make the library installable
