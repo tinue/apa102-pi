@@ -1,7 +1,7 @@
 """This is the main driver module for APA102 LEDs"""
-import Adafruit_GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
+from machine import Pin, SPI
 from math import ceil
+from gc import mem_free, collect
 
 RGB_MAP = { 'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
             'gbr': [2, 1, 3], 'brg': [1, 3, 2], 'bgr': [1, 2, 3] }
@@ -11,6 +11,8 @@ class APA102:
     Driver for APA102 LEDS (aka "DotStar").
 
     (c) Martin Erzberger 2016-2018
+
+    modified by mindforger for use on ESP 8266 and 8285
 
     Public methods are:
      - set_pixel
@@ -71,13 +73,14 @@ class APA102:
     LED_START = 0b11100000 # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000):
+                 order='rgb', mosi=13, sclk=14, baudrate=8000000, chipselect_pin=5):
         """Initializes the library.
         
         """
         self.num_led = num_led  # The number of LEDs in the Strip
         order = order.lower()
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
+        self.chipselect = Pin(chipselect_pin, Pin.OUT)
         # Limit the brightness to the maximum if it's set higher
         if global_brightness > self.MAX_BRIGHTNESS:
             self.global_brightness = self.MAX_BRIGHTNESS
@@ -87,40 +90,35 @@ class APA102:
         self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
         
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
-        if mosi == 10 and sclk == 11:
-        	self.spi = SPI.SpiDev(0, 0, max_speed_hz) # Bus 0, chip select 0
-        else:
-        	self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi)
+        #if mosi == 13 and sclk == 14:
+        self.spi = SPI(1, baudrate=baudrate) # Bus 1, no automatic chip select
+        #else:
+        #	self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi)
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.
-
         This method clocks out a start frame, telling the receiving LED
         that it must update its own color now.
         """
-        self.spi.write([0] * 4)  # Start frame, 32 zero bits
+        self.spi.write(b'0000')  # Start frame, 32 zero bits
 
 
     def clock_end_frame(self):
         """Sends an end frame to the LED strip.
-
         As explained above, dummy data must be sent after the last real colour
         information so that all of the data can reach its destination down the line.
         The delay is not as bad as with the human example above.
         It is only 1/2 bit per LED. This is because the SPI clock line
         needs to be inverted.
-
         Say a bit is ready on the SPI data line. The sender communicates
         this by toggling the clock line. The bit is read by the LED
         and immediately forwarded to the output data line. When the clock goes
         down again on the input side, the LED will toggle the clock up
         on the output to tell the next LED that the bit is ready.
-
         After one LED the clock is inverted, and after two LEDs it is in sync
         again, but one cycle behind. Therefore, for every two LEDs, one bit
         of delay gets accumulated. For 300 LEDs, 150 additional bits must be fed to
         the input of LED one so that the data can reach the last LED.
-
         Ultimately, we need to send additional numLEDs/2 arbitrary data bits,
         in order to trigger numLEDs/2 additional clock changes. This driver
         sends zeroes, which has the benefit of getting LED one partially or
@@ -130,7 +128,7 @@ class APA102:
         """
         # Round up num_led/2 bits (or num_led/16 bytes)
         for _ in range((self.num_led + 15) // 16):
-            self.spi.write([0x00])
+            self.spi.write(b'0')
 
 
     def clear_strip(self):
@@ -143,7 +141,6 @@ class APA102:
 
     def set_pixel(self, led_num, red, green, blue, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
-
         The changed pixel is not shown yet on the Stripe, it is only
         written to the pixel buffer. Colors are passed individually.
         If brightness is not set the global brightness setting is used.
@@ -171,7 +168,6 @@ class APA102:
 
     def set_pixel_rgb(self, led_num, rgb_color, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
-
         The changed pixel is not shown yet on the Stripe, it is only
         written to the pixel buffer.
         Colors are passed combined (3 bytes concatenated)
@@ -184,7 +180,6 @@ class APA102:
 
     def rotate(self, positions=1):
         """ Rotate the LEDs by the specified number of positions.
-
         Treating the internal LED array as a circular buffer, rotate it by
         the specified number of positions. The number could be negative,
         which means rotating in the opposite direction.
@@ -195,20 +190,23 @@ class APA102:
 
     def show(self):
         """Sends the content of the pixel buffer to the strip.
-
         Todo: More than 1024 LEDs requires more than one xfer operation.
         """
+        self.chipselect.on()
         self.clock_start_frame()
         # xfer2 kills the list, unfortunately. So it must be copied first
         # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
-        self.spi.write(list(self.leds))
+        self.spi.write(bytearray(self.leds))#list(self.leds))
         self.clock_end_frame()
+        self.chipselect.off()
 
 
     def cleanup(self):
         """Release the SPI device; Call this method at the end"""
-
-        self.spi.close()  # Close SPI port
+        self.leds = []
+        collect()
+        mem_free()
+        #self.spi.close()  # Close SPI port
 
     @staticmethod
     def combine_color(red, green, blue):
@@ -234,5 +232,4 @@ class APA102:
 
     def dump_array(self):
         """For debug purposes: Dump the LED array onto the console."""
-
         print(self.leds)
