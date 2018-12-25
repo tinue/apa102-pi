@@ -1,11 +1,4 @@
-import sys
 import setuptools
-try:
-    import Adafruit_GPIO
-except ImportError:
-    sys.stdout.write('This package requires the Adafruit_Python_GPIO library to be installed. '
-                      'See https://github.com/adafruit/Adafruit_Python_GPIO for installation instructions.')
-    sys.exit(1)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -29,5 +22,6 @@ setuptools.setup(
         "Topic :: Education",
         "Topic :: System :: Hardware :: Hardware Drivers",
     ),
+    install_requires=["Adafruit-GPIO"],
     platforms=("Raspbian Stretch")
 )
