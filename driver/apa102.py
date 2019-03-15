@@ -71,7 +71,8 @@ class APA102:
     LED_START = 0b11100000 # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000):
+                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000,
+                 ce=None):
         """Initializes the library.
         
         """
@@ -88,9 +89,9 @@ class APA102:
         
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
-        	self.spi = SPI.SpiDev(0, 0, max_speed_hz) # Bus 0, chip select 0
+            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, max_speed_hz) # Bus 0
         else:
-        	self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi)
+            self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.
