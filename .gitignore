@@ -1,6 +1,8 @@
 .DS_Store
 /.project
 /.pydevproject
-/__pycache__
+__pycache__/
 /*.pyc
 /.settings
+*.iml
+/.idea
