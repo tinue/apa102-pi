@@ -1,18 +1,11 @@
-import sys
 import setuptools
-try:
-    import Adafruit_GPIO
-except ImportError:
-    sys.stdout.write('This package requires the Adafruit_Python_GPIO library to be installed. '
-                      'See https://github.com/adafruit/Adafruit_Python_GPIO for installation instructions.')
-    sys.exit(1)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="APA102_Pi",
-    version="2018.1",
+    version="2019.3",
     author="Martin Erzberger",
     author_email="martin@erzberger.ch",
     description="Driver for APA102 LEDs on a Raspberry Pi",
@@ -29,5 +22,6 @@ setuptools.setup(
         "Topic :: Education",
         "Topic :: System :: Hardware :: Hardware Drivers",
     ),
+    install_requires=["Adafruit-GPIO"],
     platforms=("Raspbian Stretch")
 )
