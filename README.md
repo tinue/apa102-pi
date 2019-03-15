@@ -77,20 +77,16 @@ Then, update your installation (`sudo apt update && sudo apt -y upgrade`). This 
 - Install the git client: `sudo apt install -y git`  
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
 - Install Python 3 and some packages required by the Adafruit library: `sudo apt install -y python3-dev python3-pip python3-smbus python3-rpi.gpio`  
-- Fetch the Adafruit_Python_GPIO library: `cd /tmp && wget https://github.com/adafruit/Adafruit_Python_GPIO/archive/master.zip && unzip master.zip`  
-- Install the library: `cd Adafruit_Python_GPIO-master && sudo python3 ./setup.py install`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
-- Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git`  
+- Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/APA102_Pi.git && cd APA102_Pi`  
+- Install the library (this will also install the required Adafruit_GPIO): `sudo pip3 install .`  
 - You might want to set the number of LEDs to match your strip: `cd APA102_Pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
 
 ## Use the APA102 project as a library
-If you want to use the APA102 library in your own projects, you will have to install it onto the Raspberry Pi. This is simple:
+You can use the library in your own projects. The steps above installed it globally for all users. To verify this, copy one of the test scripts away from the APA102_Pi directory, e.g. directly to your home. If you can run the library from home without an error message, then the library is available system-wide.
 
- - Make sure to be in the project root directory: `cd ~/Development/APA102_Pi`
- - Install the library (the dot at the end is necessary!) `sudo pip3 install .`
- 
- To test, copy one of the test scripts away from the APA102 directory, e.g. directly to your home. If you can run the library from home without an error message, then the library is available system-wide.
+Hopefully I will soon find time to add the library to pypi, so that it can be easily included in your project distributions.
 
 ## Release history
 - 2015-04-13: Initial version
@@ -107,3 +103,4 @@ If you want to use the APA102 library in your own projects, you will have to ins
 - 2018-01-19: Tiny release: Added a sample
 - 2018-05-25: No change in the driver; Slight restructuring of the templates and schemes to allow easier change of the SPI pins; Additional sample specific to the the Pimoroni Blinkt!
 - 2018-06-08: Make the library installable
+- 2019-03-15: Simplify installation (thanks @nielstron)
