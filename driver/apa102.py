@@ -3,8 +3,9 @@ import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 from math import ceil
 
-RGB_MAP = { 'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
-            'gbr': [2, 1, 3], 'brg': [1, 3, 2], 'bgr': [1, 2, 3] }
+RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
+           'gbr': [2, 1, 3], 'brg': [1, 3, 2], 'bgr': [1, 2, 3]}
+
 
 class APA102:
     """
@@ -67,8 +68,8 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 31 # Safeguard: Max. brightness that can be selected. 
-    LED_START = 0b11100000 # Three "1" bits, followed by 5 brightness bits
+    MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
+    LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
                  order='rgb', mosi=10, sclk=11, max_speed_hz=8000000,
@@ -85,11 +86,11 @@ class APA102:
         else:
             self.global_brightness = global_brightness
 
-        self.leds = [self.LED_START,0,0,0] * self.num_led # Pixel buffer
-        
+        self.leds = [self.LED_START, 0, 0, 0] * self.num_led  # Pixel buffer
+
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
-            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, max_speed_hz) # Bus 0
+            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, max_speed_hz)  # Bus 0
         else:
             self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
 
@@ -100,7 +101,6 @@ class APA102:
         that it must update its own color now.
         """
         self.spi.write([0] * 4)  # Start frame, 32 zero bits
-
 
     def clock_end_frame(self):
         """Sends an end frame to the LED strip.
@@ -133,14 +133,12 @@ class APA102:
         for _ in range((self.num_led + 15) // 16):
             self.spi.write([0x00])
 
-
     def clear_strip(self):
         """ Turns off the strip and shows the result right away."""
 
         for led in range(self.num_led):
             self.set_pixel(led, 0, 0, 0)
         self.show()
-
 
     def set_pixel(self, led_num, red, green, blue, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
@@ -157,7 +155,7 @@ class APA102:
         # Calculate pixel brightness as a percentage of the
         # defined global_brightness. Round up to nearest integer
         # as we expect some brightness unless set to 0
-        brightness = ceil(bright_percent*self.global_brightness/100.0)
+        brightness = ceil(bright_percent * self.global_brightness / 100.0)
         brightness = int(brightness)
 
         # LED startframe is three "1" bits, followed by 5 brightness bits
@@ -169,7 +167,6 @@ class APA102:
         self.leds[start_index + self.rgb[1]] = green
         self.leds[start_index + self.rgb[2]] = blue
 
-
     def set_pixel_rgb(self, led_num, rgb_color, bright_percent=100):
         """Sets the color of one pixel in the LED stripe.
 
@@ -180,8 +177,7 @@ class APA102:
         """
         self.set_pixel(led_num, (rgb_color & 0xFF0000) >> 16,
                        (rgb_color & 0x00FF00) >> 8, rgb_color & 0x0000FF,
-                        bright_percent)
-
+                       bright_percent)
 
     def rotate(self, positions=1):
         """ Rotate the LEDs by the specified number of positions.
@@ -192,7 +188,6 @@ class APA102:
         """
         cutoff = 4 * (positions % self.num_led)
         self.leds = self.leds[cutoff:] + self.leds[:cutoff]
-
 
     def show(self):
         """Sends the content of the pixel buffer to the strip.
@@ -205,7 +200,6 @@ class APA102:
         self.spi.write(list(self.leds))
         self.clock_end_frame()
 
-
     def cleanup(self):
         """Release the SPI device; Call this method at the end"""
 
@@ -217,12 +211,11 @@ class APA102:
 
         return (red << 16) + (green << 8) + blue
 
-
     def wheel(self, wheel_pos):
         """Get a color from a color wheel; Green -> Red -> Blue -> Green"""
 
         if wheel_pos > 255:
-            wheel_pos = 255 # Safeguard
+            wheel_pos = 255  # Safeguard
         if wheel_pos < 85:  # Green -> Red
             return self.combine_color(wheel_pos * 3, 255 - wheel_pos * 3, 0)
         if wheel_pos < 170:  # Red -> Blue
@@ -231,7 +224,6 @@ class APA102:
         # Blue -> Green
         wheel_pos -= 170
         return self.combine_color(0, wheel_pos * 3, 255 - wheel_pos * 3)
-
 
     def dump_array(self):
         """For debug purposes: Dump the LED array onto the console."""

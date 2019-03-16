@@ -1,6 +1,9 @@
 .DS_Store
 /.project
 /.pydevproject
+/build/
+/dist/
+*.egg-info
 __pycache__/
 /*.pyc
 /.settings

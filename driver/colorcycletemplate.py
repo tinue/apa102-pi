@@ -2,6 +2,7 @@
 import time
 from driver import apa102
 
+
 class ColorCycleTemplate:
     """This class is the basis of all color cycles.
     This file is usually used "as is" and not being changed.
@@ -9,18 +10,18 @@ class ColorCycleTemplate:
     A specific color cycle must subclass this template, and implement at least the
     'update' method.
     """
-        
-    def __init__(self, num_led, pause_value = 0, num_steps_per_cycle = 100,
-                 num_cycles = -1, global_brightness = 255, order = 'rbg',
-                 mosi = 10, sclk = 11):
-        self.num_led = num_led # The number of LEDs in the strip
-        self.pause_value = pause_value # How long to pause between two runs
-        self.num_steps_per_cycle = num_steps_per_cycle # Steps in one cycle.
-        self.num_cycles = num_cycles # How many times will the program run
-        self.global_brightness = global_brightness # Brightness of the strip
-        self.order = order # Strip colour ordering
-        self.mosi = mosi # Master out slave in of the SPI protocol
-        self.sclk = sclk # Clock line of the SPI protocol
+
+    def __init__(self, num_led, pause_value=0, num_steps_per_cycle=100,
+                 num_cycles=-1, global_brightness=255, order='rbg',
+                 mosi=10, sclk=11):
+        self.num_led = num_led  # The number of LEDs in the strip
+        self.pause_value = pause_value  # How long to pause between two runs
+        self.num_steps_per_cycle = num_steps_per_cycle  # Steps in one cycle.
+        self.num_cycles = num_cycles  # How many times will the program run
+        self.global_brightness = global_brightness  # Brightness of the strip
+        self.order = order  # Strip colour ordering
+        self.mosi = mosi  # Master out slave in of the SPI protocol
+        self.sclk = sclk  # Clock line of the SPI protocol
 
     def init(self, strip, num_led):
         """This method is called to initialize a color program.
@@ -58,26 +59,26 @@ class ColorCycleTemplate:
         strip.clear_strip()
         strip.cleanup()
 
-
     def start(self):
         """This method does the actual work."""
+        strip = None
         try:
             strip = apa102.APA102(num_led=self.num_led,
                                   global_brightness=self.global_brightness,
-                                  mosi = self.mosi, sclk = self.sclk,
-                                  order=self.order) # Initialize the strip
+                                  mosi=self.mosi, sclk=self.sclk,
+                                  order=self.order)  # Initialize the strip
             strip.clear_strip()
-            self.init(strip, self.num_led) # Call the subclasses init method
+            self.init(strip, self.num_led)  # Call the subclasses init method
             strip.show()
             current_cycle = 0
             while True:  # Loop forever
-                for current_step in range (self.num_steps_per_cycle):
+                for current_step in range(self.num_steps_per_cycle):
                     need_repaint = self.update(strip, self.num_led,
                                                self.num_steps_per_cycle,
                                                current_step, current_cycle)
                     if need_repaint:
-                        strip.show() # repaint if required
-                    time.sleep(self.pause_value) # Pause until the next step
+                        strip.show()  # repaint if required
+                    time.sleep(self.pause_value)  # Pause until the next step
                 current_cycle += 1
                 if self.num_cycles != -1:
                     if current_cycle >= self.num_cycles:
@@ -87,4 +88,5 @@ class ColorCycleTemplate:
 
         except KeyboardInterrupt:  # Ctrl-C can halt the light program
             print('Interrupted...')
-            self.cleanup(strip)
+            if self.cleanup is not None:
+                self.cleanup(strip)

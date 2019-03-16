@@ -1,2 +1,2 @@
-name = "APA102_Pi"
-__all__ = ["driver"]
+name = "apa102-pi"
+__all__ = ["driver", "colorschemes"]
