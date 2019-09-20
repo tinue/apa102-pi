@@ -14,8 +14,8 @@ Some APA102 pictures are available [here](https://www.iot-projekte.ch/apa102-led
 The library is designed to take care of the details about sending colour commands. It is supposed to be educational, and is therefore written in Python. The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running via the Python interpreter. However, if you need something really fast, e.g. to drive a small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2018-11-13 version of Raspbian Stretch Lite).
-* If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, Enable); The SPI must be free and unused.
+* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2019-07-10 version of Raspbian Buster Lite).
+* If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>); The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
 * The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO). The library will be installed automatically if you follow the instructions below.  
 * Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself. I used Python 3 for all development and test. 
@@ -87,7 +87,7 @@ To retrieve the full library including source code, this is what you need to do 
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
-- You might want to set the number of LEDs to match your strip: `cd apa102-pi && nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
+- You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
 
 ## Release history
@@ -107,3 +107,4 @@ To retrieve the full library including source code, this is what you need to do 
 - 2.1.0 (2018-06-08): Make the library installable
 - 2.1.1 (2019-03-15): Enable Chip Select (thanks @grandinquisitor); Simplify installation (thanks @nielstron)
 - 2.2.0 (2019-03-16): First version that is available on PyPi (pip 3 install); Renamed package for compliancy with PEP 8.
+- 2.2.1 (2019-09-20): Nothing new, just a re-test of the library with Raspbian Buster
