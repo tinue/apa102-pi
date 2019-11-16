@@ -68,7 +68,7 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
+    MAX_BRIGHTNESS = 120  # Safeguard: Max. brightness that can be selected.
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
@@ -129,6 +129,8 @@ class APA102:
         of the driver could omit the "clockStartFrame" method if enough zeroes have
         been sent as part of "clockEndFrame".
         """
+        # Send reset frame necessary for SK9822 type LEDs
+        self.spi.write([0] * 4)
         # Round up num_led/2 bits (or num_led/16 bytes)
         for _ in range((self.num_led + 15) // 16):
             self.spi.write([0x00])
