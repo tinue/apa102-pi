@@ -89,6 +89,7 @@ To retrieve the full library including source code, this is what you need to do 
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
+- Optional: Remove the previously installed central version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
 
 ## Release history
 - 1.0.0 (2015-04-13): Initial version
