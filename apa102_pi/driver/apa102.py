@@ -68,11 +68,12 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 120  # Safeguard: Max. brightness that can be selected.
+    MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
+    BUS_SPEED_HZ = 8000000  # SPI bus speed; If the strip flickers, lower this value
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000,
+                 order='rgb', mosi=10, sclk=11, bus_speed_hz=BUS_SPEED_HZ,
                  ce=None):
         """Initializes the library.
         
@@ -90,7 +91,7 @@ class APA102:
 
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
-            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, max_speed_hz)  # Bus 0
+            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, bus_speed_hz)  # Bus 0
         else:
             self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
 
