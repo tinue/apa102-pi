@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Sample script to run a few colour tests on a Pimoroni Blinkt!."""
-from colorschemes import colorschemes
+from apa102_pi.colorschemes import colorschemes
 
 NUM_LED = 8
 MOSI = 23  # Hardware SPI uses BCM 10 & 11. Change these values for bit bang mode

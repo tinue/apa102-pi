@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Ultra simple sample on how to use the library"""
-from driver import apa102
+from apa102_pi.driver import apa102
 import time
 
 # Initialize the library and the strip

@@ -1,6 +1,6 @@
 """The module contains templates for colour cycles"""
 import time
-from driver import apa102
+from apa102_pi.driver import apa102
 
 
 class ColorCycleTemplate:
