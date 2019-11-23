@@ -1,4 +1,4 @@
-name: Upload Python Package to Test PyPi
+name: Upload Python Package to PyPi
 
 on:
   release:
