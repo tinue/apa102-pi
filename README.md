@@ -182,4 +182,4 @@ i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of u
 - 2.2.0 (2019-03-16): First version that is available on PyPi (pip 3 install); Renamed package for compliancy with PEP 8.
 - 2.2.1 (2019-09-20): Nothing new, just a re-test of the library with Raspbian Buster
 - 2.3.0 (2019-11-23): Untested fix for SK9822 type LEDs; Fix name space; Update readme. Note: The namespace fix
-breaks compatibility with the previous version, hence the minor upgrade in the version number.
+                      breaks compatibility with the previous version, hence the minor upgrade in the version number.
