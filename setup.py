@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="apa102-pi",
-    version="2.2.0",
+    version="2.3.0",
     author="Martin Erzberger",
     author_email="martin@erzberger.ch",
     description="Driver for APA102 LEDs on a Raspberry Pi",
@@ -14,6 +14,7 @@ setuptools.setup(
     url="https://github.com/tinue/apa102-pi",
     python_requires='>3',
     packages=setuptools.find_packages(),
+    license='GPLv2',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
@@ -24,5 +25,5 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     install_requires=["Adafruit-GPIO"],
-    platforms=["Raspbian Stretch", "Raspberry Pi"]
+    platforms=["Raspbian Buster", "Raspberry Pi"]
 )

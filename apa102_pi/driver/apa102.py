@@ -70,9 +70,10 @@ class APA102:
     # Constants
     MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
+    BUS_SPEED_HZ = 8000000  # SPI bus speed; If the strip flickers, lower this value
 
     def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, max_speed_hz=8000000,
+                 order='rgb', mosi=10, sclk=11, bus_speed_hz=BUS_SPEED_HZ,
                  ce=None):
         """Initializes the library.
         
@@ -90,7 +91,7 @@ class APA102:
 
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
-            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, max_speed_hz)  # Bus 0
+            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, bus_speed_hz)  # Bus 0
         else:
             self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
 
@@ -129,6 +130,8 @@ class APA102:
         of the driver could omit the "clockStartFrame" method if enough zeroes have
         been sent as part of "clockEndFrame".
         """
+        # Send reset frame necessary for SK9822 type LEDs
+        self.spi.write([0] * 4)
         # Round up num_led/2 bits (or num_led/16 bytes)
         for _ in range((self.num_led + 15) // 16):
             self.spi.write([0x00])
