@@ -23,7 +23,7 @@ This allows to easily chain multiple LEDs together. Colour command #1 lights the
 command #2 the next LED, and so forth. Sending for example 300 colour commands does light
 an entire 5 Meter, 60 LEDs per Meter strip.
 
-Some APA102 pictures are available [here](https://www.iot-projekte.ch/apa102-led-part-1-pictures)
+Some APA102 pictures are available [here](https://tinue.github.io/apa102-pi/)
 
 ## Purpose
 The library is designed to take care of the details about sending colour commands.
