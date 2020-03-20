@@ -92,6 +92,8 @@ class APA102:
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
             self.spi = SPI.SpiDev(0, 0 if ce is None else ce, bus_speed_hz)  # Bus 0
+        elif mosi == 20 and sclk == 21:
+            self.spi = SPI.SpiDev(1, 0 if ce is None else ce, bus_speed_hz)  # Bus 1
         else:
             self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
 
