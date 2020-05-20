@@ -1,6 +1,5 @@
 """This is the main driver module for APA102 LEDs"""
-import Adafruit_GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
+import busio
 from math import ceil
 
 RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
@@ -11,7 +10,7 @@ class APA102:
     """
     Driver for APA102 LEDS (aka "DotStar").
 
-    (c) Martin Erzberger 2016-2018
+    (c) Martin Erzberger 2016-2020
 
     Public methods are:
      - set_pixel
@@ -91,11 +90,11 @@ class APA102:
 
         # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
         if mosi == 10 and sclk == 11:
-            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, bus_speed_hz)  # Bus 0
-        elif mosi == 20 and sclk == 21:
-            self.spi = SPI.SpiDev(1, 0 if ce is None else ce, bus_speed_hz)  # Bus 1
-        else:
-            self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
+            self.spi = busio.SPI(sclk, mosi)
+            while not self.spi.try_lock():
+                pass
+            self.spi.configure(baudrate=bus_speed_hz)
+            self.spi.unlock()
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.
@@ -208,7 +207,7 @@ class APA102:
     def cleanup(self):
         """Release the SPI device; Call this method at the end"""
 
-        self.spi.close()  # Close SPI port
+        self.spi.deinit()  # Close SPI port
 
     @staticmethod
     def combine_color(red, green, blue):
