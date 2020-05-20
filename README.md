@@ -1,11 +1,5 @@
 # apa102-pi
 
-## Updating
-If you are currently using this library, you will have to update your `import` statements and add the 
-previously missing package name. For example:
-* Old: `from driver import apa102`
-* New: `from apa102_pi.driver import apa102`
-
 ## Introduction
 Apa102-pi is a pure Python library to drive APA102 type LED strands. It is supposed to work on a Raspberry Pi,
 and is not tested on any other platform.
@@ -38,10 +32,8 @@ version of Raspbian Buster Lite).
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>);
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
-* The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO).
+* The Adafruit_Blinka library (https://github.com/adafruit/Adafruit_Blinka).
 The library will be installed automatically if you follow the instructions below.  
-* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself.
-I used Python 3 for all development and test. 
 
 For a permanent installation, a 10$ Raspberry Pi Zero W can be dedicated to the task of driving the LEDs.
 The connector to the LED stripe would be soldered directly to the correct ports on the board.
@@ -49,8 +41,8 @@ For development purposes, a Raspberry Pi 4 Model B is a better choice due to its
 Even the 1GB model is more than enough.
 
 ## Wiring
-The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. 
-Therefore it's possible that the 3.3 Volt SPI signal is not properly recognized by the LED driver chips.
+The Raspberry Pi is a 3.3 volt device, and the APA102 LEDs are 5 volt devices. 
+Therefore, it's possible that the 3.3 volt SPI signal is not properly recognized by the LED driver chips.
 To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
 You will not damage the Raspberry Pi without a level shifter, because the Raspberry Pi determines
 the voltage of MOSI and SCLK.  
@@ -70,7 +62,7 @@ you can wire CE0 or CE1 to its "output-enable" pin, for example.
 
 The LED strip uses a lot of power (roughly 20mA per LED, i.e. 60mA for one bright white dot).
 If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately
-kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. 
+kill the Raspberry! Therefore, I recommend not to connect the power line of the LED with the Raspberry. 
 To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply 
 for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
 
@@ -148,7 +140,7 @@ To retrieve the full library including source code, this is what you need to do 
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
-- Optional: Remove the previously installed central version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
+- Optional: Remove the previously installed version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
 
 ## Troubleshooting
 ### Flicker
