@@ -12,7 +12,7 @@ class ColorCycleTemplate:
     """
 
     def __init__(self, num_led, pause_value=0, num_steps_per_cycle=100,
-                 num_cycles=-1, global_brightness=255, order='rbg',
+                 num_cycles=-1, global_brightness=31, order='rbg',
                  mosi=10, sclk=11):
         self.num_led = num_led  # The number of LEDs in the strip
         self.pause_value = pause_value  # How long to pause between two runs

@@ -1,5 +1,7 @@
 """This is the main driver module for APA102 LEDs"""
 import busio
+import bitbangio
+import board
 from math import ceil
 
 RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
@@ -67,34 +69,42 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
-    BUS_SPEED_HZ = 8000000  # SPI bus speed; If the strip flickers, lower this value
 
-    def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, bus_speed_hz=BUS_SPEED_HZ,
-                 ce=None):
-        """Initializes the library.
-        
+    def __init__(self, num_led=8, global_brightness=31,
+                 order='rgb', mosi=10, sclk=11, ce=None, bus_speed_hz=8000000):
+        """Initializes the library
+
+        :param num_led: Number of LEDs in the strip
+        :param global_brightness: Overall brightness
+        :param order: Order in which the colours are addressed (this differs from strip to strip)
+        :param mosi: Master Out pin. Use 10 for SPI0, 20 for SPI1, any GPIO pin for bitbang.
+        :param sclk: Clock, use 11 for SPI0, 21 for SPI1, any GPIO pin for bitbang.
+        :param ce: GPIO to use for Chip select. Can be any free GPIO pin. The hardware CE0 and CE1 are not used!
+        :param bus_speed_hz: Speed of the hardware SPI bus. If glitches on the bus are visible, lower the value.
         """
-        self.num_led = num_led  # The number of LEDs in the Strip
-        order = order.lower()
+        self.num_led = num_led
+        order = order.lower()  # Just in case someone use CAPS here.
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        # Limit the brightness to the maximum if it's set higher
-        if global_brightness > self.MAX_BRIGHTNESS:
-            self.global_brightness = self.MAX_BRIGHTNESS
-        else:
-            self.global_brightness = global_brightness
+        self.global_brightness = global_brightness
 
         self.leds = [self.LED_START, 0, 0, 0] * self.num_led  # Pixel buffer
 
-        # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
-        if mosi == 10 and sclk == 11:
-            self.spi = busio.SPI(sclk, mosi)
-            while not self.spi.try_lock():
-                pass
-            self.spi.configure(baudrate=bus_speed_hz)
-            self.spi.unlock()
+        if mosi == 10:
+            if sclk != 11:
+                raise ValueError("Illegal MOSI / SCLK combination")
+            self.spi = busio.SPI(clock=board.SCLK, MOSI=board.MOSI)
+        elif mosi == 20:
+            if sclk != 21:
+                raise ValueError("Illegal MOSI / SCLK combination")
+            self.spi = busio.SPI(clock=board.SCLK_1, MOSI=board.MOSI_1)
+        else:
+            self.spi = bitbangio.SPI(clock=sclk, MOSI=mosi)
+
+        while not self.spi.try_lock():
+            pass
+        self.spi.configure(baudrate=bus_speed_hz)
+        self.spi.unlock()
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.

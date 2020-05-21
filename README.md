@@ -55,10 +55,19 @@ Without a level shifter, the wiring is very simple:
 - LED Data to Raspberry SPI MOSI  
 - LED Clock to Raspberry SPI SCLK
 
-Note that the "Chip Select" line (CE0 or CE1) is not used on an APA102 strip.
-The APA102 chip always accepts data, and cannot be switched off.
-For "Chip Select" to work, you need additional hardware. If you use a level shifter,
-you can wire CE0 or CE1 to its "output-enable" pin, for example.
+A note about "chip select": The Raspberry Pi's SPI0 bus has two Chip Select pins: CE0 and CE1. They correspond
+to the devices `/dev/spidev0.0` and `/dev/spidev0.1`. A typical SPI device has one Chip Select input line. So, on
+a stock Raspberry Pi one can connect two SPI devices: Both share SCLK, MOSI and MISO, and each one uses its own Chip
+Select. You might be wondering where the Chip Select input line is on an LED strip. Answer: There is none. You 
+therefore can't disable the Strip from reading data on SCLK/MOSI, at least not without additional hardware.
+ 
+What you could try (I have not tested this): If you use a level shifter, wire CE0 or CE1 to its "output-enable" 
+pin. This should disable / enable the level shifter, and thus disable/enable data to flow.
+
+Having said all this, please note that the official CE0 and CE1 pins are *not used / supported* by this library.
+Instead, one can tell which GPIO pin to use for Chip Select. Any GPIO pin can be used, and so more than two
+strips can be connected to the Raspberry Pi. This is a feature of the Adafruit-Blinka library that is simply passed 
+on to apa102-pi. 
 
 The LED strip uses a lot of power (roughly 20mA per LED, i.e. 60mA for one bright white dot).
 If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately
