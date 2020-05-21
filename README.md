@@ -33,7 +33,8 @@ version of Raspbian Buster Lite).
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
 * The Adafruit_Blinka library (https://github.com/adafruit/Adafruit_Blinka).
-The library will be installed automatically if you follow the instructions below.  
+The library will be installed automatically if you follow the instructions below.
+* For Bitbang SPI: The Adafruit Circuitpython Bitbangio library (https://github.com/adafruit/Adafruit_CircuitPython_BitbangIO). This library will also be installed automatically.
 
 For a permanent installation, a 10$ Raspberry Pi Zero W can be dedicated to the task of driving the LEDs.
 The connector to the LED stripe would be soldered directly to the correct ports on the board.

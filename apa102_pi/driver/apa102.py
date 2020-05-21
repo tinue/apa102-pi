@@ -1,6 +1,6 @@
 """This is the main driver module for APA102 LEDs"""
 import busio
-import bitbangio
+import adafruit_bitbangio as bitbangio
 import board
 from math import ceil
 
@@ -99,7 +99,8 @@ class APA102:
                 raise ValueError("Illegal MOSI / SCLK combination")
             self.spi = busio.SPI(clock=board.SCLK_1, MOSI=board.MOSI_1)
         else:
-            self.spi = bitbangio.SPI(clock=sclk, MOSI=mosi)
+            # self.spi = bitbangio.SPI(clock=sclk, MOSI=mosi)
+            self.spi = bitbangio.SPI(clock=board.D24, MOSI=board.D23)
 
         while not self.spi.try_lock():
             pass
@@ -112,7 +113,9 @@ class APA102:
         This method clocks out a start frame, telling the receiving LED
         that it must update its own color now.
         """
+        self.spi.try_lock()
         self.spi.write([0] * 4)  # Start frame, 32 zero bits
+        self.spi.unlock()
 
     def clock_end_frame(self):
         """Sends an end frame to the LED strip.
@@ -142,10 +145,12 @@ class APA102:
         been sent as part of "clockEndFrame".
         """
         # Send reset frame necessary for SK9822 type LEDs
+        self.spi.try_lock()
         self.spi.write([0] * 4)
         # Round up num_led/2 bits (or num_led/16 bytes)
         for _ in range((self.num_led + 15) // 16):
             self.spi.write([0x00])
+        self.spi.unlock()
 
     def clear_strip(self):
         """ Turns off the strip and shows the result right away."""
@@ -211,7 +216,9 @@ class APA102:
         self.clock_start_frame()
         # xfer2 kills the list, unfortunately. So it must be copied first
         # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
+        self.spi.try_lock()
         self.spi.write(list(self.leds))
+        self.spi.unlock()
         self.clock_end_frame()
 
     def cleanup(self):
