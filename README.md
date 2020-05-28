@@ -27,8 +27,8 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2019-09-26
-version of Raspbian Buster Lite).
+* A Raspberry Pi, running an up-to-date version of Raspberry Pi OS (the library is tested with the 2020-05-27
+version of Raspberry Pi OS (32-bit) Lite).
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>);
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
@@ -56,19 +56,20 @@ Without a level shifter, the wiring is very simple:
 - LED Data to Raspberry SPI MOSI  
 - LED Clock to Raspberry SPI SCLK
 
-A note about "chip select": The Raspberry Pi's SPI0 bus has two Chip Select pins: CE0 and CE1. They correspond
+A note about "chip select": The Raspberry Pi's SPI0 bus has two hardware Chip Select pins: CE0 and CE1. They correspond
 to the devices `/dev/spidev0.0` and `/dev/spidev0.1`. A typical SPI device has one Chip Select input line. So, on
 a stock Raspberry Pi one can connect two SPI devices: Both share SCLK, MOSI and MISO, and each one uses its own Chip
 Select. You might be wondering where the Chip Select input line is on an LED strip. Answer: There is none. You 
-therefore can't disable the Strip from reading data on SCLK/MOSI, at least not without additional hardware.
- 
-What you could try (I have not tested this): If you use a level shifter, wire CE0 or CE1 to its "output-enable" 
-pin. This should disable / enable the level shifter, and thus disable/enable data to flow.
+therefore can't disable the Strip from reading data on SCLK/MOSI, at least not without additional hardware. For
+example, you can wire the chip select GPIO of the Raspberry Pi to the level shifter "output-enable" pin.
 
-Having said all this, please note that the official CE0 and CE1 pins are *not used / supported* by this library.
-Instead, one can tell which GPIO pin to use for Chip Select. Any GPIO pin can be used, and so more than two
-strips can be connected to the Raspberry Pi. This is a feature of the Adafruit-Blinka library that is simply passed 
-on to apa102-pi. 
+The Adafruit library does not use or support the hardware chip select pins on the Rapsberry Pi. Instead, any
+free GPIO pin can be used. Because this is multiplexed in software, it is very slow. The feature is intended
+for e.g. sensors that do not send or receive a lot of data over the bus, but in exchange there are more than two
+sensors attached.
+The apa102-pi library attempts to use this software multiplexing if a CE value is passed on driver initialization.
+The strip will update a lot slower if this is used. It is still a bit faster than bitbang, though.
+Please note that I have not tested this feature, because I never assembled the hardware required for this.
 
 The LED strip uses a lot of power (roughly 20mA per LED, i.e. 60mA for one bright white dot).
 If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately
@@ -99,10 +100,10 @@ as a Christmas light. Compare this to an Arduino/WS2812 based installation: To r
 to take the Arduino inside, or a laptop outside.
 
 ## Quick Raspberry Pi setup
-Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used.
+Because the Raspberry Pi Zero runs headless, the Raspberry Pi OS Lite image was used.
 This image only contains the bare minimum of packages, and some packages have be added manually.
 
-The current Raspbian Lite images can easily be set-up to run headless from the start.
+The current Raspberry Pi OS Lite images can easily be set-up to run headless from the start.
 After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory,
 and create an empty file named `ssh` to enable SSH.  
 On a Mac you would do this: `touch /Volumes/boot/ssh`. To enable and configure WLAN, create
@@ -125,7 +126,7 @@ is `raspberry`: Make sure to change it right away!
 Next, install additional packages and enable SPI:
 
 - Update your installation (`sudo apt update && sudo apt -y upgrade`).
-- Install packages: `sudo apt install -y python3-pip`
+- Install packages: `sudo apt install -y python3-pip python3-rpi.gpio`
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI;
 While you are at it: Do change the default password! Exit exit the tool and reboot  
 
@@ -185,4 +186,4 @@ i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of u
 - 2.2.1 (2019-09-20): Nothing new, just a re-test of the library with Raspbian Buster
 - 2.3.0 (2019-11-24): Untested fix for SK9822 type LEDs; Fix name space; Update readme. Note: The namespace fix
                       breaks compatibility with the previous version, hence the minor upgrade in the version number.
-- 2.4.0 (2020-03-20): SPI: Switch from deprecated Adafruit_GPIO to Adafruit_Blinka library; 
+- 2.4.0 (2020-05-28): SPI: Switch from deprecated Adafruit_GPIO to Adafruit_Blinka library; Re-test with Raspberry Pi OS 2020-05-27
