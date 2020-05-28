@@ -242,7 +242,13 @@ class APA102:
 
     def cleanup(self):
         """Release the SPI device; Call this method at the end"""
-
+        # Try to unlock, in case it is still locked
+        try:
+            self.spi.unlock()  # Unlock first
+        except ValueError:
+            # Do nothing, the bus was not locked
+            pass
+        self.clear_strip()
         self.spi.deinit()  # Close SPI port
 
     @staticmethod
