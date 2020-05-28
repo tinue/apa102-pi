@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="apa102-pi",
-    version="2.3.0",
+    version="2.4.0-beta1",
     author="Martin Erzberger",
     author_email="martin@erzberger.ch",
     description="Driver for APA102 LEDs on a Raspberry Pi",
@@ -24,6 +24,7 @@ setuptools.setup(
         "Topic :: System :: Hardware :: Hardware Drivers",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=["Adafruit-GPIO"],
+    install_requires=["adafruit-circuitpython-bitbangio",
+                      "adafruit-circuitpython-busdevice"],
     platforms=["Raspbian Buster", "Raspberry Pi"]
 )
