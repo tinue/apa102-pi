@@ -1,6 +1,9 @@
 """This is the main driver module for APA102 LEDs"""
-import Adafruit_GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
+import busio
+import adafruit_bitbangio as bitbangio
+import digitalio
+import board
+from adafruit_bus_device.spi_device import SPIDevice
 from math import ceil
 
 RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
@@ -11,7 +14,7 @@ class APA102:
     """
     Driver for APA102 LEDS (aka "DotStar").
 
-    (c) Martin Erzberger 2016-2018
+    (c) Martin Erzberger 2016-2020
 
     Public methods are:
      - set_pixel
@@ -68,32 +71,67 @@ class APA102:
     down the line to the last LED.
     """
     # Constants
-    MAX_BRIGHTNESS = 31  # Safeguard: Max. brightness that can be selected.
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
-    BUS_SPEED_HZ = 8000000  # SPI bus speed; If the strip flickers, lower this value
 
-    def __init__(self, num_led, global_brightness=MAX_BRIGHTNESS,
-                 order='rgb', mosi=10, sclk=11, bus_speed_hz=BUS_SPEED_HZ,
-                 ce=None):
-        """Initializes the library.
-        
+    def __init__(self, num_led=8, global_brightness=31,
+                 order='rgb', mosi=10, sclk=11, ce=None, bus_speed_hz=8000000):
+        """Initializes the library
+
+        :param num_led: Number of LEDs in the strip
+        :param global_brightness: Overall brightness
+        :param order: Order in which the colours are addressed (this differs from strip to strip)
+        :param mosi: Master Out pin. Use 10 for SPI0, 20 for SPI1, any GPIO pin for bitbang.
+        :param sclk: Clock, use 11 for SPI0, 21 for SPI1, any GPIO pin for bitbang.
+        :param ce: GPIO to use for Chip select. Can be any free GPIO pin. Warning: This will slow down the bus
+                   significantly. Note: The hardware CE0 and CE1 are not used
+        :param bus_speed_hz: Speed of the hardware SPI bus. If glitches on the bus are visible, lower the value.
         """
-        self.num_led = num_led  # The number of LEDs in the Strip
-        order = order.lower()
+        self.num_led = num_led
+        order = order.lower()  # Just in case someone use CAPS here.
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        # Limit the brightness to the maximum if it's set higher
-        if global_brightness > self.MAX_BRIGHTNESS:
-            self.global_brightness = self.MAX_BRIGHTNESS
-        else:
-            self.global_brightness = global_brightness
+        self.global_brightness = global_brightness
+        self.use_bitbang = False  # Two raw SPI devices exist: Bitbang (software) and hardware SPI.
+        self.use_ce = False  # If true, use the BusDevice abstraction layer on top of the raw SPI device
 
         self.leds = [self.LED_START, 0, 0, 0] * self.num_led  # Pixel buffer
-
-        # MOSI 10 and SCLK 11 is hardware SPI, which needs to be set-up differently
-        if mosi == 10 and sclk == 11:
-            self.spi = SPI.SpiDev(0, 0 if ce is None else ce, bus_speed_hz)  # Bus 0
+        if ce is not None:
+            # If a chip enable value is present, use the Adafruit CircuitPython BusDevice abstraction on top
+            # of the raw SPI device (hardware or bitbang)
+            # The next line is just here to prevent an "unused" warning from the IDE
+            digitalio.DigitalInOut(board.D1)
+            # Convert the chip enable pin number into an object (reflection à la Python)
+            ce = eval("digitalio.DigitalInOut(board.D"+str(ce)+")")
+            self.use_ce = True
+        # Heuristic: Test for the hardware SPI pins. If found, use hardware SPI, otherwise bitbang SPI
+        if mosi == 10:
+            if sclk != 11:
+                raise ValueError("Illegal MOSI / SCLK combination")
+            self.spi = busio.SPI(clock=board.SCLK, MOSI=board.MOSI)
+        elif mosi == 20:
+            if sclk != 21:
+                raise ValueError("Illegal MOSI / SCLK combination")
+            self.spi = busio.SPI(clock=board.SCLK_1, MOSI=board.MOSI_1)
         else:
-            self.spi = SPI.BitBang(GPIO.get_platform_gpio(), sclk, mosi, ss=ce)
+            # Use Adafruit CircuitPython BitBangIO, because the pins do not match one of the hardware SPI devices
+            # Reflection à la Python to get at the digital IO pins
+            self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))
+            self.use_bitbang = True
+        # Add the BusDevice on top of the raw SPI
+        if self.use_ce:
+            self.spibus = SPIDevice(spi=self.spi,  chip_select=ce, baudrate=bus_speed_hz)
+        else:
+            # If the BusDevice is not used, the bus speed is set here instead
+            while not self.spi.try_lock():
+                pass
+            self.spi.configure(baudrate=bus_speed_hz)
+            self.spi.unlock()
+        # Debug
+        if self.use_ce:
+            print("Use software chip enable")
+        if self.use_bitbang:
+            print("Use bitbang SPI")
+        else:
+            print("Use hardware SPI")
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.
@@ -101,7 +139,7 @@ class APA102:
         This method clocks out a start frame, telling the receiving LED
         that it must update its own color now.
         """
-        self.spi.write([0] * 4)  # Start frame, 32 zero bits
+        self.send_to_spi(bytes([0] * 4))
 
     def clock_end_frame(self):
         """Sends an end frame to the LED strip.
@@ -131,10 +169,9 @@ class APA102:
         been sent as part of "clockEndFrame".
         """
         # Send reset frame necessary for SK9822 type LEDs
-        self.spi.write([0] * 4)
-        # Round up num_led/2 bits (or num_led/16 bytes)
+        self.send_to_spi(bytes([0] * 4))
         for _ in range((self.num_led + 15) // 16):
-            self.spi.write([0x00])
+            self.send_to_spi([0x00])
 
     def clear_strip(self):
         """ Turns off the strip and shows the result right away."""
@@ -161,7 +198,7 @@ class APA102:
         brightness = ceil(bright_percent * self.global_brightness / 100.0)
         brightness = int(brightness)
 
-        # LED startframe is three "1" bits, followed by 5 brightness bits
+        # LED start frame is three "1" bits, followed by 5 brightness bits
         ledstart = (brightness & 0b00011111) | self.LED_START
 
         start_index = 4 * led_num
@@ -200,13 +237,19 @@ class APA102:
         self.clock_start_frame()
         # xfer2 kills the list, unfortunately. So it must be copied first
         # SPI takes up to 4096 Integers. So we are fine for up to 1024 LEDs.
-        self.spi.write(list(self.leds))
+        self.send_to_spi(self.leds)
         self.clock_end_frame()
 
     def cleanup(self):
         """Release the SPI device; Call this method at the end"""
-
-        self.spi.close()  # Close SPI port
+        # Try to unlock, in case it is still locked
+        try:
+            self.spi.unlock()  # Unlock first
+        except ValueError:
+            # Do nothing, the bus was not locked
+            pass
+        self.clear_strip()
+        self.spi.deinit()  # Close SPI port
 
     @staticmethod
     def combine_color(red, green, blue):
@@ -227,6 +270,19 @@ class APA102:
         # Blue -> Green
         wheel_pos -= 170
         return self.combine_color(0, wheel_pos * 3, 255 - wheel_pos * 3)
+
+    def send_to_spi(self, data):
+        """Internal method to output data to the chosen SPI device"""
+        if self.use_ce:
+            with self.spibus as bus_device:
+                bus_device.write(data)
+        elif self.use_bitbang:
+            while not self.spi.try_lock():
+                pass
+            self.spi.write(data)
+            self.spi.unlock()
+        else:
+            self.spi.write(data)
 
     def dump_array(self):
         """For debug purposes: Dump the LED array onto the console."""

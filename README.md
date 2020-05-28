@@ -1,21 +1,15 @@
 # apa102-pi
 
-## Updating
-If you are currently using this library, you will have to update your `import` statements and add the 
-previously missing package name. For example:
-* Old: `from driver import apa102`
-* New: `from apa102_pi.driver import apa102`
-
 ## Introduction
-Apa102-pi is a pure Python library to drive APA102 type LED strands. It is supposed to work on a Raspberry Pi,
-and is not tested on any other platform.
+Apa102-pi is a pure Python library to drive APA102 and SK9822 type LED strands. It is supposed to work on a Raspberry
+Pi, and is not tested on any other platform.
 
 APA102 LEDs are typically 5050 type LEDs with an additional driver chip per LED.
 The driver chip takes care of receiving the desired colour via its input lines, and then holding
-this colour until a new command is received.
+this colour until a new command arrives.
 
-Depending on where these LEDs are bought, they might be called "APA102", "Superled", or "DotStar".
-They should not be confused with the three-wire WS2812 LEDs, also known as "NeoPixel".
+Depending on the LEDs vendor, they might be called "APA102", "SK9822", "Superled", or "DotStar".
+They must not be confused with the three-wire WS2812 LEDs, also known as "NeoPixel".
 
 The really nice part about the driver chip is this: Once it has received its own colour command,
 it forwards any further colour commands from its input to its output lines.
@@ -26,34 +20,37 @@ an entire 5 Meter, 60 LEDs per Meter strip.
 Some APA102 pictures are available [here](https://tinue.github.io/apa102-pi/)
 
 ## Purpose
-The library is designed to take care of the details about sending colour commands.
+The library takes care of the details on sending colour commands.
 It is supposed to be educational, and is therefore written in Python.
 The library is fast enough to produce nice colour effects on a 300 LED strand, even though it is running
 via the Python interpreter. However, if you need something really fast, e.g. to drive a
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian (the library is tested with the 2019-09-26
-version of Raspbian Buster Lite).
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-05-27
+is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
+to 4.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>);
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
-* The Adafruit_Python_GPIO library (https://github.com/adafruit/Adafruit_Python_GPIO).
-The library will be installed automatically if you follow the instructions below.  
-* Python 3: Some people tried with Python 2 and reported it working, but I can't vouch for this myself.
-I used Python 3 for all development and test. 
+* Three libraries from Adafruit: [Adafruit-Blinka](https://github.com/adafruit/Adafruit_Blinka), 
+[adafruit-circuitpython-bitbangio](https://github.com/adafruit/Adafruit_CircuitPython_BitbangIO),
+and [adafruit-circuitpython-busdevice](https://github.com/adafruit/Adafruit_CircuitPython_BusDevice).
+These libraries will be installed automatically if you follow the steps in
+[Use the APA102 project as a library](#use-the-apa102-project-as-a-library).
 
 For a permanent installation, a 10$ Raspberry Pi Zero W can be dedicated to the task of driving the LEDs.
 The connector to the LED stripe would be soldered directly to the correct ports on the board.
 For development purposes, a Raspberry Pi 4 Model B is a better choice due to its greater speed.
-Even the 1GB model is more than enough.
+Even the 1GB model is more than enough for this purpose.
 
 ## Wiring
-The Raspberry Pi is a 3.3 Volt device, and the APA102 LEDs are 5 Volt devices. 
-Therefore it's possible that the 3.3 Volt SPI signal is not properly recognized by the LED driver chips.
+The Raspberry Pi is a 3.3 volt device, and the APA102 LEDs are 5 volt devices. 
+Therefore, it is possible that the first LED driver chip does not properly detect the 3.3 volt SPI signal from
+the Raspberry Pi.  
+The first chip will amplify the signal to 5 volts before passing it on, so it is really only the first chip
+that must detect the 3.3 volt signal.  
 To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
-You will not damage the Raspberry Pi without a level shifter, because the Raspberry Pi determines
-the voltage of MOSI and SCLK.  
 In my limited testing with four different stripes from various Chinese sources I had no issues without
 a level shifter, but your experience might be different.
 
@@ -63,14 +60,24 @@ Without a level shifter, the wiring is very simple:
 - LED Data to Raspberry SPI MOSI  
 - LED Clock to Raspberry SPI SCLK
 
-Note that the "Chip Select" line (CE0 or CE1) is not used on an APA102 strip.
-The APA102 chip always accepts data, and cannot be switched off.
-For "Chip Select" to work, you need additional hardware. If you use a level shifter,
-you can wire CE0 or CE1 to its "output-enable" pin, for example.
+A note about "chip select": The Raspberry Pi's SPI0 bus has two hardware Chip Select pins: CE0 and CE1. They correspond
+to the devices `/dev/spidev0.0` and `/dev/spidev0.1`. A typical SPI device has one Chip Select input line. So, on
+a stock Raspberry Pi one can connect two SPI devices: Both share SCLK, MOSI and MISO, and each one uses its own Chip
+Select. You might be wondering where the Chip Select input line is on an LED strip. Answer: There is none. You 
+therefore can't disable the Strip from reading data on SCLK/MOSI, at least not without additional hardware. For
+example, you can wire the chip select GPIO of the Raspberry Pi to the level shifter "output-enable" pin.
+
+The Adafruit library does not use or support the hardware chip select pins of the Raspberry Pi. Instead, any
+free GPIO pin can be used. Because this is multiplexed in software, it is very slow. The feature supports
+e.g. sensors, where you have a lot of them (more than two), and each sensor only sends or
+receives a limited amount of data.  
+The apa102-pi library attempts to use this software multiplexing if a CE value is passed on driver initialization.
+The strip will update a lot slower if this is used. It is still a bit faster than bitbang, though.
+Please note that I have not tested this feature, because I never assembled the hardware required for this.
 
 The LED strip uses a lot of power (roughly 20mA per LED, i.e. 60mA for one bright white dot).
 If you try to power the LEDs from the Raspberry Pi 5V output, you will most likely immediately
-kill the Raspberry! Therefore I recommend not to connect the power line of the LED with the Raspberry. 
+kill the Raspberry! Therefore, I recommend not to connect the power line of the LED with the Raspberry. 
 To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply 
 for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
 
@@ -92,15 +99,15 @@ a bunch of APA 102 LEDs; They show the "Rainbow" color scheme:
 ![Raspberry Pi Zero W with Phat Beat](PhatBeat.jpg)
 
 Plugged into the USB port is a WLAN stick (nowadays I use a Raspberry Pi Zero W, of course).
-This way I can reprogram the light show from my desk, even if the strips are installed outside 
+This way I can reprogram the light show from my desk, even if the strips sit outside 
 as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has
 to take the Arduino inside, or a laptop outside.
 
 ## Quick Raspberry Pi setup
-Because the Raspberry Pi Zero runs headless, the Raspbian Lite image was used.
+Because the Raspberry Pi Zero runs headless, I recommend using the Raspberry Pi OS *Lite* image.
 This image only contains the bare minimum of packages, and some packages have be added manually.
 
-The current Raspbian Lite images can easily be set-up to run headless from the start.
+The current Raspberry Pi OS Lite images can easily be set-up to run headless from the start.
 After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory,
 and create an empty file named `ssh` to enable SSH.  
 On a Mac you would do this: `touch /Volumes/boot/ssh`. To enable and configure WLAN, create
@@ -123,18 +130,18 @@ is `raspberry`: Make sure to change it right away!
 Next, install additional packages and enable SPI:
 
 - Update your installation (`sudo apt update && sudo apt -y upgrade`).
-- Install packages: `sudo apt install -y python3-pip`
+- Install packages: `sudo apt install -y python3-pip python3-rpi.gpio`
 - Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI;
-While you are at it: Do change the default password! Exit exit the tool and reboot  
+While you are at it: Do change the default password! Exit the tool and reboot.  
 
 ## Use the APA102 project as a library
 The library was originally built as an educational piece of software. It shows how the protocol
 for APA102 LEDs works. Most of this is explained in the form of comments in the source code.
-If you are interested in this, then follow up with the next chapter.
+If you are interested in this, then follow up with the chapter after this one.
 If all you need is the library itself for your own projects, then this chapter is enough to get you started.
 
 Install the library like this: `sudo pip3 install apa102-pi`. 
-This will install the library and it's dependencies for all users. 
+This will install the library, and its dependencies for all users. 
 
 To verify the installation, download the test script from Github:
 `curl https://raw.githubusercontent.com/tinue/apa102-pi/master/runcolorcycle.py -o runcolorcycle.py`.
@@ -148,17 +155,17 @@ To retrieve the full library including source code, this is what you need to do 
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
-- Optional: Remove the previously installed central version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
+- Optional: Remove the previously installed version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
 
 ## Troubleshooting
 ### Flicker
-Some users reported flicker towards the end of large stripes. It seems that there is a correlation amongst
-three variables:
+Sometimes the end of large stripes flickers. It seems that there is a correlation amongst three variables:
 * SPI bus speed
 * Overall brightness of the strip
 * Length of the strip
 
-It turns out that you can only have two out of three: On a long, bright strip you will have to lower the bus speed significantly.
+It turns out that you can only have two out of three: On a long, bright strip you will have to lower the bus speed 
+significantly.  
 Check the apa102.py driver: Default is 8MHz (`BUS_SPEED_HZ = 8000000`). You may have to go as low as 1.5MHz, 
 i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of updates and zero wait
 (e.g. rainbow) will run much slower.
@@ -183,3 +190,5 @@ i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of u
 - 2.2.1 (2019-09-20): Nothing new, just a re-test of the library with Raspbian Buster
 - 2.3.0 (2019-11-24): Untested fix for SK9822 type LEDs; Fix name space; Update readme. Note: The namespace fix
                       breaks compatibility with the previous version, hence the minor upgrade in the version number.
+- 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries;
+                      Re-test with Raspberry Pi OS 2020-05-27.

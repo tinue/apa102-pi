@@ -12,8 +12,8 @@ class ColorCycleTemplate:
     """
 
     def __init__(self, num_led, pause_value=0, num_steps_per_cycle=100,
-                 num_cycles=-1, global_brightness=255, order='rbg',
-                 mosi=10, sclk=11):
+                 num_cycles=-1, global_brightness=31, order='rbg',
+                 mosi=10, sclk=11, ce=None):
         self.num_led = num_led  # The number of LEDs in the strip
         self.pause_value = pause_value  # How long to pause between two runs
         self.num_steps_per_cycle = num_steps_per_cycle  # Steps in one cycle.
@@ -22,6 +22,7 @@ class ColorCycleTemplate:
         self.order = order  # Strip colour ordering
         self.mosi = mosi  # Master out slave in of the SPI protocol
         self.sclk = sclk  # Clock line of the SPI protocol
+        self.ce = ce  # Chip select
 
     def init(self, strip, num_led):
         """This method is called to initialize a color program.
@@ -66,7 +67,7 @@ class ColorCycleTemplate:
             strip = apa102.APA102(num_led=self.num_led,
                                   global_brightness=self.global_brightness,
                                   mosi=self.mosi, sclk=self.sclk,
-                                  order=self.order)  # Initialize the strip
+                                  order=self.order, ce=self.ce)  # Initialize the strip
             strip.clear_strip()
             self.init(strip, self.num_led)  # Call the subclasses init method
             strip.show()
@@ -88,5 +89,5 @@ class ColorCycleTemplate:
 
         except KeyboardInterrupt:  # Ctrl-C can halt the light program
             print('Interrupted...')
-            if self.cleanup is not None:
-                self.cleanup(strip)
+            if strip is not None:
+                strip.cleanup()
