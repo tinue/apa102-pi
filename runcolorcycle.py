@@ -2,7 +2,7 @@
 """Sample script to run a few colour tests on the strip."""
 from apa102_pi.colorschemes import colorschemes
 
-NUM_LED = 430
+NUM_LED = 576
 
 # One Cycle with one step and a pause of three seconds. Hence three seconds of white light
 print('Three Seconds of white light')
