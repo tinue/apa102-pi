@@ -31,9 +31,9 @@ class APA102:
     user of the library. This file is the main driver, and is usually used "as is".
 
     Very brief overview of APA102: An APA102 LED is addressed with SPI. The bits
-    are shifted in one by one, starting with the least significant bit.
+    are clocked in one by one, starting with the least significant bit.
 
-    An LED usually just forwards everything that is sent to its data-in to
+    An LED usually just copies everything that is sent to its data-in to
     data-out. While doing this, it remembers its own color and keeps glowing
     with that color as long as there is power.
 
@@ -60,10 +60,10 @@ class APA102:
       to the very last LED on the strip
 
     The last step is necessary, because each LED delays forwarding the data
-    a bit. Imagine ten people in a row. When you yell the last color
+    a bit. Imagine ten people in a row. When you tell the last color
     information, i.e. the one for person ten, to the first person in
     the line, then you are not finished yet. Person one has to turn around
-    and yell it to person 2, and so on. So it takes ten additional "dummy"
+    and tell it to person 2, and so on. So it takes ten additional "dummy"
     cycles until person ten knows the color. When you look closer,
     you will see that not even person 9 knows its own color yet. This
     information is still with person 2. Essentially the driver sends additional
@@ -73,12 +73,10 @@ class APA102:
     # Constants
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
-    def __init__(self, num_led=8, global_brightness=31,
-                 order='rgb', mosi=10, sclk=11, ce=None, bus_speed_hz=8000000):
+    def __init__(self, num_led=8, order='rgb', mosi=10, sclk=11, ce=None, bus_speed_hz=8000000):
         """Initializes the library
 
         :param num_led: Number of LEDs in the strip
-        :param global_brightness: Overall brightness
         :param order: Order in which the colours are addressed (this differs from strip to strip)
         :param mosi: Master Out pin. Use 10 for SPI0, 20 for SPI1, any GPIO pin for bitbang.
         :param sclk: Clock, use 11 for SPI0, 21 for SPI1, any GPIO pin for bitbang.
@@ -89,7 +87,7 @@ class APA102:
         self.num_led = num_led
         order = order.lower()  # Just in case someone use CAPS here.
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        self.global_brightness = global_brightness
+        self.global_brightness = 31  # Use a conservative brightness that should not overload the power supply.
         self.use_bitbang = False  # Two raw SPI devices exist: Bitbang (software) and hardware SPI.
         self.use_ce = False  # If true, use the BusDevice abstraction layer on top of the raw SPI device
 
@@ -122,6 +120,7 @@ class APA102:
         else:
             # If the BusDevice is not used, the bus speed is set here instead
             while not self.spi.try_lock():
+                # Busy wait to acquire the lock
                 pass
             self.spi.configure(baudrate=bus_speed_hz)
             self.spi.unlock()
@@ -148,7 +147,7 @@ class APA102:
         information so that all of the data can reach its destination down the line.
         The delay is not as bad as with the human example above.
         It is only 1/2 bit per LED. This is because the SPI clock line
-        needs to be inverted.
+        is being inverted by the LED chip.
 
         Say a bit is ready on the SPI data line. The sender communicates
         this by toggling the clock line. The bit is read by the LED
@@ -172,6 +171,10 @@ class APA102:
         self.send_to_spi(bytes([0] * 4))
         for _ in range((self.num_led + 15) // 16):
             self.send_to_spi([0x00])
+
+    def set_global_brightness(self, brigtness):
+        """ Set the overall brightness of the strip."""
+        self.global_brightness = brigtness
 
     def clear_strip(self):
         """ Turns off the strip and shows the result right away."""
@@ -278,6 +281,7 @@ class APA102:
                 bus_device.write(data)
         elif self.use_bitbang:
             while not self.spi.try_lock():
+                # Busy wait to acquire the lock
                 pass
             self.spi.write(data)
             self.spi.unlock()

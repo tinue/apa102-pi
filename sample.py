@@ -4,9 +4,10 @@ from apa102_pi.driver import apa102
 import time
 
 # Initialize the library and the strip
-strip = apa102.APA102(num_led=430, global_brightness=20, mosi=10, sclk=11,
-                      order='rbg')
+strip = apa102.APA102(num_led=430, mosi=10, sclk=11, order='rbg')
 
+# Lower the brightness
+strip.set_global_brightness(20)
 # Turn off all pixels (sometimes a few light up when the strip gets power)
 strip.clear_strip()
 

@@ -27,7 +27,7 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-05-27
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-08-20
 is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
 to 4.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>);
@@ -192,3 +192,4 @@ i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of u
                       breaks compatibility with the previous version, hence the minor upgrade in the version number.
 - 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries;
                       Re-test with Raspberry Pi OS 2020-05-27.
+- 2.4.1 (2020-08-31): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-08-20 (kernel 5.7) and latest Adafruit libraries.                      
