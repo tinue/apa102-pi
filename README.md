@@ -202,3 +202,4 @@ the value from your application. Check `sample.py` to see how this is done.
                       (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative"
                       value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names
                       in Github to reflect current standards.
+- 2.4.2 (tbd):        Nothing yet.  

@@ -2,11 +2,10 @@ name: Upload Python Package to PyPi
 
 on:
   release:
-    types: [published]
+    types: [released]
 
 jobs:
   deploy:
-    if: "!github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -26,4 +25,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
-        twine upload dist/*
+        #twine upload dist/*
