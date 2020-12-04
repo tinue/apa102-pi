@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="apa102-pi",
-    version="2.4.0",
+    version="2.4.1",
     author="Martin Erzberger",
     author_email="martin@erzberger.ch",
     description="Driver for APA102 LEDs on a Raspberry Pi",

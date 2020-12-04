@@ -27,10 +27,10 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-08-20
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-12-02
 is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
 to 4.
-* If hardware SPI is used: SPI enabled and active (`raspi-config`, Interfacing Options, SPI, \<Yes\>);
+* If hardware SPI is used: SPI enabled and active (`raspi-config`, Interface Options, SPI, \<Yes\>);
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
 * Three libraries from Adafruit: [Adafruit-Blinka](https://github.com/adafruit/Adafruit_Blinka), 
@@ -131,7 +131,7 @@ Next, install additional packages and enable SPI:
 
 - Update your installation (`sudo apt update && sudo apt -y upgrade`).
 - Install packages: `sudo apt install -y python3-pip python3-rpi.gpio`
-- Activate SPI: `sudo raspi-config`; Go to "Interfacing Options"; Go to "SPI"; Enable SPI;
+- Activate SPI: `sudo raspi-config`; Go to "Interface Options"; Go to "SPI"; Enable SPI;
 While you are at it: Do change the default password! Exit the tool and reboot.  
 
 ## Use the APA102 project as a library
@@ -144,7 +144,7 @@ Install the library like this: `sudo pip3 install apa102-pi`.
 This will install the library, and its dependencies for all users. 
 
 To verify the installation, download the test script from Github:
-`curl https://raw.githubusercontent.com/tinue/apa102-pi/master/runcolorcycle.py -o runcolorcycle.py`.
+`curl https://raw.githubusercontent.com/tinue/apa102-pi/main/runcolorcycle.py -o runcolorcycle.py`.
 To run, type `python3 ./runcolorcycle.py`.
  
 ## Full installation
@@ -170,6 +170,12 @@ Check the apa102.py driver: Default is 8MHz (`BUS_SPEED_HZ = 8000000`). You may 
 i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of updates and zero wait
 (e.g. rainbow) will run much slower.
 
+### Brightness
+There is a default global brightness value in the driver itself (apa102.py, line 90). Of this parameter, the LED
+controller chip interprets only the first 5 bits, snd ignores the rest. Therefore, everything >= 31 is 100% brightness.
+The value is set to 1/8th of the maximum (i.e. 8), and can be changed either by patching apa102.py, or by setting
+the value from your application. Check `sample.py` to see how this is done.
+
 ## Release history
 - 1.0.0 (2015-04-13): Initial version
 - 1.1.0 (2015-12-04): Add documentation
@@ -192,4 +198,7 @@ i.e. `BUS_SPEED_HZ = 1500000`. This means that all light programs with lots of u
                       breaks compatibility with the previous version, hence the minor upgrade in the version number.
 - 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries;
                       Re-test with Raspberry Pi OS 2020-05-27.
-- 2.4.1 (2020-08-31): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-08-20 (kernel 5.7) and latest Adafruit libraries.                      
+- 2.4.1 (2020-12-04): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-12-02
+                      (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative"
+                      value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names
+                      in Github to reflect current standards.

@@ -87,7 +87,7 @@ class APA102:
         self.num_led = num_led
         order = order.lower()  # Just in case someone use CAPS here.
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        self.global_brightness = 31  # Use a conservative brightness that should not overload the power supply.
+        self.global_brightness = 4  # This is a 5 bit value, i.e. from 0 to 31. Conservative 1/8th, change if desired.
         self.use_bitbang = False  # Two raw SPI devices exist: Bitbang (software) and hardware SPI.
         self.use_ce = False  # If true, use the BusDevice abstraction layer on top of the raw SPI device
 
