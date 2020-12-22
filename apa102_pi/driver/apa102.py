@@ -19,6 +19,8 @@ class APA102:
     Public methods are:
      - set_pixel
      - set_pixel_rgb
+     - get_pixel
+     - get_pixel_rgb
      - show
      - clear_strip
      - cleanup
