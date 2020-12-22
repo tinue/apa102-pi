@@ -225,7 +225,7 @@ class APA102:
     def get_pixel(self, led_num):
         """Gets the color and brightness of one pixel in the LED stripe.
 
-        This wont be the color that is actualy show on the stripe.
+        This wont be the color that is actually show on the stripe.
         But rather the value stored in memory.
         """
         if led_num < 0:
@@ -243,7 +243,7 @@ class APA102:
         output["blue"] = self.leds[start_index + self.rgb[2]]
 
         # Recalculate the percentage brightness
-        # This wond be the precice value that was passed to set_pixel
+        # This wond be the precise value that was passed to set_pixel
         # But it wil be the value used by the LED
         output["bright_percent"] = output["bright_percent"] * 100 / self.global_brightness
 
@@ -252,7 +252,7 @@ class APA102:
     def get_pixel_rgb(self, led_num):
         """Gets the color of one pixel in the LED stripe.
 
-        This wont be the color that is actualy show on the stripe.
+        This wont be the color that is actually show on the stripe.
         But rather the value stored in memory.
         Colors are combined (3 bytes concatenated)
         """
