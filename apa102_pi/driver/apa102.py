@@ -237,7 +237,7 @@ class APA102:
         start_index = 4 * led_num
 
         # Filterout the three start bitst
-        output["brightness"] = self.leds[start_index] & 0b00011111
+        output["bright_percent"] = self.leds[start_index] & 0b00011111
         output["red"] = self.leds[start_index + self.rgb[0]]
         output["green"] = self.leds[start_index + self.rgb[1]]
         output["blue"] = self.leds[start_index + self.rgb[2]]
@@ -245,7 +245,7 @@ class APA102:
         # Recalculate the percentage brightness
         # This wond be the precice value that was passed to set_pixel
         # But it wil be the value used by the LED
-        output["brightness"] = output["brightness"] * 100 / self.global_brightness
+        output["bright_percent"] = output["bright_percent"] * 100 / self.global_brightness
 
         return output
 
@@ -260,7 +260,7 @@ class APA102:
         pixel = self.get_pixel(led_num)
 
         output["rgb_color"] = pixel["red"] << 8 | pixel["green"] << 8 | pixel["blue"]
-        output["brightness"] = pixel["brightness"]
+        output["bright_percent"] = pixel["bright_percent"]
 
         return output
 
