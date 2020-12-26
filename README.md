@@ -181,11 +181,11 @@ the value from your application. Check `sample.py` to see how this is done.
 - 1.1.0 (2015-12-04): Add documentation
 - 1.1.1 (2015-12-11): Rewrote the examples, driver itself is unchanged
 - 1.2.0 (2015-12-17): Fixes for reported problems; Update all of the color samples; Decouple number of steps from number of LEDs
-- 1.3.0 (2016-03-25): Merged changes from kapacuk: Allow stripes with different color coding than RGB
-- 1.3.1 (2016-03-27): Merged 'rotate' method from kapacuk; Fixed errors from previous merge
+- 1.3.0 (2016-03-25): Merged changes from @kapacuk: Allow stripes with different color coding than RGB
+- 1.3.1 (2016-03-27): Merged 'rotate' method from @kapacuk; Fixed errors from previous merge
 - 1.3.2 (2016-12-25): Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
-- 1.3.3 (2017-04-14): Merged pull request #19 from DurandA/master; Cleanup; Update README.MD, No functional changes
-- 1.4.0 (2017-04-16): Update code to better comply with the Python style guide (PEP 8); Merged pull request from 'jmb'
+- 1.3.3 (2017-04-14): Merged pull request #19 from @DurandA; Cleanup; Update README.MD, No functional changes
+- 1.4.0 (2017-04-16): Update code to better comply with the Python style guide (PEP 8); Merged pull request from @jmb
 - 1.4.1 (2017-08-26): Tested with Raspbian Stretch; Update Readme.
 - 2.0.0 (2017-11-05): Exchanged the SPI library to Adafruit_Python_GPIO. This allows to support devices that do not use hardware SPI, for example the Pimoroni Blinkt! or the Phat Beat.
 - 2.0.1 (2018-01-19): Tiny release: Added a sample
@@ -202,4 +202,4 @@ the value from your application. Check `sample.py` to see how this is done.
                       (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative"
                       value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names
                       in Github to reflect current standards.
-- 2.4.2 (tbd):        Nothing yet.  
+- 2.4.2 (tbd):        Add methods get_pixel and get_pixel_rgb, thanks @KAN-PC046.  
