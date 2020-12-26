@@ -19,6 +19,8 @@ class APA102:
     Public methods are:
      - set_pixel
      - set_pixel_rgb
+     - get_pixel
+     - get_pixel_rgb
      - show
      - clear_strip
      - cleanup
@@ -221,6 +223,48 @@ class APA102:
         self.set_pixel(led_num, (rgb_color & 0xFF0000) >> 16,
                        (rgb_color & 0x00FF00) >> 8, rgb_color & 0x0000FF,
                        bright_percent)
+
+    def get_pixel(self, led_num):
+        """Gets the color and brightness of one pixel in the LED stripe.
+
+        This wont be the color that is actually show on the stripe.
+        But rather the value stored in memory.
+        """
+        if led_num < 0:
+            return  # Pixel is invisible, so ignore
+        if led_num >= self.num_led:
+            return  # again, invisible
+
+        output = {"red": 0, "green": 0, "blue": 0, "brightness": 0}
+        start_index = 4 * led_num
+
+        # Filterout the three start bitst
+        output["bright_percent"] = self.leds[start_index] & 0b00011111
+        output["red"] = self.leds[start_index + self.rgb[0]]
+        output["green"] = self.leds[start_index + self.rgb[1]]
+        output["blue"] = self.leds[start_index + self.rgb[2]]
+
+        # Recalculate the percentage brightness
+        # This wond be the precise value that was passed to set_pixel
+        # But it wil be the value used by the LED
+        output["bright_percent"] = output["bright_percent"] * 100 / self.global_brightness
+
+        return output
+
+    def get_pixel_rgb(self, led_num):
+        """Gets the color of one pixel in the LED stripe.
+
+        This wont be the color that is actually show on the stripe.
+        But rather the value stored in memory.
+        Colors are combined (3 bytes concatenated)
+        """
+        output = {"rgb_color": 0, "brightness": 0}
+        pixel = self.get_pixel(led_num)
+
+        output["rgb_color"] = pixel["red"] << 8 | pixel["green"] << 8 | pixel["blue"]
+        output["bright_percent"] = pixel["bright_percent"]
+
+        return output
 
     def rotate(self, positions=1):
         """ Rotate the LEDs by the specified number of positions.
