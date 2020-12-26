@@ -227,8 +227,8 @@ class APA102:
     def get_pixel(self, led_num):
         """Gets the color and brightness of one pixel in the LED stripe.
 
-        This wont be the color that is actually show on the stripe.
-        But rather the value stored in memory.
+        This won't be the color that is actually shown on the stripe,
+        but rather the value stored in memory.
         """
         if led_num < 0:
             return  # Pixel is invisible, so ignore
@@ -238,15 +238,15 @@ class APA102:
         output = {"red": 0, "green": 0, "blue": 0, "brightness": 0}
         start_index = 4 * led_num
 
-        # Filterout the three start bitst
+        # Filter out the three start bits
         output["bright_percent"] = self.leds[start_index] & 0b00011111
         output["red"] = self.leds[start_index + self.rgb[0]]
         output["green"] = self.leds[start_index + self.rgb[1]]
         output["blue"] = self.leds[start_index + self.rgb[2]]
 
         # Recalculate the percentage brightness
-        # This wond be the precise value that was passed to set_pixel
-        # But it wil be the value used by the LED
+        # This won't be the precise value that was passed to set_pixel
+        # But it will be the value used by the LED
         output["bright_percent"] = output["bright_percent"] * 100 / self.global_brightness
 
         return output
@@ -254,8 +254,8 @@ class APA102:
     def get_pixel_rgb(self, led_num):
         """Gets the color of one pixel in the LED stripe.
 
-        This wont be the color that is actually show on the stripe.
-        But rather the value stored in memory.
+        This won't be the color that is actually show on the stripe,
+        but rather the value stored in memory.
         Colors are combined (3 bytes concatenated)
         """
         output = {"rgb_color": 0, "brightness": 0}
@@ -267,7 +267,7 @@ class APA102:
         return output
 
     def rotate(self, positions=1):
-        """ Rotate the LEDs by the specified number of positions.
+        """Rotate the LEDs by the specified number of positions.
 
         Treating the internal LED array as a circular buffer, rotate it by
         the specified number of positions. The number could be negative,
