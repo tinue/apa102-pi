@@ -158,6 +158,15 @@ To retrieve the full library including source code, this is what you need to do 
 - Optional: Remove the previously installed version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
 
 ## Troubleshooting
+### Strip remains dark
+The number one reason for this problem is that MOSI and SCLK are swapped. You can't rely on the colors of the wires,
+they seem to change with every batch of APA102 strips that are produced. To resolve, swap the two data
+wires and try again.  
+If it still does not work, then you might need a level shifter. Before you do this, you can try to lower the
+supply voltage for the strip. According to the APA102 data sheets, a "one" signal is detected as a percentage of
+the supply voltage: The lower the supply voltage, the higher the chance that 3.3 Volts is still detected
+as a "one".
+
 ### Flicker
 Sometimes the end of large stripes flickers. It seems that there is a correlation amongst three variables:
 * SPI bus speed
