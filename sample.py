@@ -3,25 +3,31 @@
 from apa102_pi.driver import apa102
 import time
 
-# Initialize the library and the strip
-strip = apa102.APA102(num_led=430, mosi=10, sclk=11, order='rbg')
 
-# Increase the brightness to 100% (from the default of 12.5%)
-strip.set_global_brightness(31)
-# Turn off all pixels (sometimes a few light up when the strip gets power)
-strip.clear_strip()
+def main():
+    # Initialize the library and the strip
+    strip = apa102.APA102(num_led=430, mosi=10, sclk=11, order='rbg')
 
-# Prepare a few individual pixels
-strip.set_pixel_rgb(12, 0xFF0000)  # Red
-strip.set_pixel_rgb(24, 0xFFFFFF)  # White
-strip.set_pixel_rgb(40, 0x00FF00)  # Green
+    # Increase the brightness to 100% (from the default of 12.5%)
+    strip.set_global_brightness(31)
+    # Turn off all pixels (sometimes a few light up when the strip gets power)
+    strip.clear_strip()
 
-# Copy the buffer to the Strip (i.e. show the prepared pixels)
-strip.show()
+    # Prepare a few individual pixels
+    strip.set_pixel_rgb(12, 0xFF0000)  # Red
+    strip.set_pixel_rgb(24, 0xFFFFFF)  # White
+    strip.set_pixel_rgb(40, 0x00FF00)  # Green
 
-# Wait a few Seconds, to check the result
-time.sleep(20)
+    # Copy the buffer to the Strip (i.e. show the prepared pixels)
+    strip.show()
 
-# Clear the strip and shut down
-strip.clear_strip()
-strip.cleanup()
+    # Wait a few Seconds, to check the result
+    time.sleep(20)
+
+    # Clear the strip and shut down
+    strip.clear_strip()
+    strip.cleanup()
+
+
+if __name__ == '__main__':
+    main()
