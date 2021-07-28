@@ -130,7 +130,7 @@ is `raspberry`: Make sure to change it right away!
 Next, install additional packages and enable SPI:
 
 - Update your installation (`sudo apt update && sudo apt -y upgrade`).
-- Install packages: `sudo apt install -y python3-pip python3-rpi.gpio`
+- Install packages: `sudo apt install -y python3-pip python3-venv python3-rpi.gpio`
 - Activate SPI: `sudo raspi-config`; Go to "Interface Options"; Go to "SPI"; Enable SPI;
 While you are at it: Do change the default password! Exit the tool and reboot.  
 
