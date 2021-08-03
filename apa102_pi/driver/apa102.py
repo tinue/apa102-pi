@@ -110,11 +110,11 @@ class APA102:
         if bus_method not in ['spi', 'bitbang']:
             raise ValueError("Illegal bus_method use spi or bitbang")
 
-        if bus_method = 'spi':
+        if bus_method == 'spi':
             if spi_bus not in spi_ports:
                 raise ValueError("Illegal spi_bus not in %s" % list(temp.keys()))
 
-        if bus_method = 'bitbang':
+        if bus_method == 'bitbang':
             if mosi == sclk:
                 raise ValueError("Illegal MOSI / SCLK can not be the same")
 
@@ -129,11 +129,11 @@ class APA102:
 
         self.leds = [self.LED_START, 0, 0, 0] * self.num_led  # Pixel buffer
 
-        if bus_method = 'spi':
+        if bus_method == 'spi':
             selected = spi_ports[spi_bus]
-            busio.SPI(clock=selected.SCLK, MOSI=selected.MOSI)
+            busio.SPI(clock=selected['SCLK'], MOSI=selected['MOSI'])
 
-        elif bus_method = 'bitbang':
+        elif bus_method == 'bitbang':
             self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))
             self.use_bitbang = True
 
