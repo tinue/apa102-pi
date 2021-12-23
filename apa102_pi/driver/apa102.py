@@ -4,6 +4,7 @@ import adafruit_bitbangio as bitbangio
 import digitalio
 import board
 from adafruit_bus_device.spi_device import SPIDevice
+from microcontroller.pin import spiPorts
 from math import ceil
 
 RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
@@ -75,25 +76,67 @@ class APA102:
     # Constants
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
-    def __init__(self, num_led=8, order='rgb', mosi=10, sclk=11, ce=None, bus_speed_hz=8000000):
+    def __init__(self, num_led=8, order='rgb', bus_method='spi', spi_bus=0, mosi=None, sclk=None, ce=None, bus_speed_hz=8000000, global_brightness=4):
         """Initializes the library
 
         :param num_led: Number of LEDs in the strip
         :param order: Order in which the colours are addressed (this differs from strip to strip)
-        :param mosi: Master Out pin. Use 10 for SPI0, 20 for SPI1, any GPIO pin for bitbang.
-        :param sclk: Clock, use 11 for SPI0, 21 for SPI1, any GPIO pin for bitbang.
+        :param bus_method: select whether to use the (hardware) spi or to bitbang
+        :param spi_bus: if bus_method is spi this selects the bus
+        :param mosi: if bus_method is bitbang this sets the Master Out pin.
+        :param sclk: if bus_method is bitbang this sets the Clock pin.
         :param ce: GPIO to use for Chip select. Can be any free GPIO pin. Warning: This will slow down the bus
                    significantly. Note: The hardware CE0 and CE1 are not used
         :param bus_speed_hz: Speed of the hardware SPI bus. If glitches on the bus are visible, lower the value.
+        :param global_brightness: This is a 5 bit value, i.e. from 0 to 31.
         """
+
+        spi_ports = {}
+        for id, SCLK, MOSI, MISO in spiPorts:
+            spi_ports[id] = {'SCLK':SCLK, 'MOSI':MOSI, 'MISO':MISO}
+
+        # Just in case someone use CAPS here.
+        order = order.lower()
+        bus_method = bus_method.lower()
+
+        if num_led <= 0:
+            raise ValueError("Illegal num_led can not be 0 or less")
+        if num_led > 1024:
+            raise ValueError("Illegal num_led only suported upto 1024 leds")
+
+        if order not in RGB_MAP:
+            raise ValueError("Illegal order not in %s" % list(RGB_MAP.keys()))
+
+        if bus_method not in ['spi', 'bitbang']:
+            raise ValueError("Illegal bus_method use spi or bitbang")
+
+        if bus_method == 'spi':
+            if spi_bus not in spi_ports:
+                raise ValueError("Illegal spi_bus not in %s" % list(temp.keys()))
+
+        if bus_method == 'bitbang':
+            if mosi == sclk:
+                raise ValueError("Illegal MOSI / SCLK can not be the same")
+
+        if global_brightness < 0 or global_brightness > 31:
+            raise ValueError("Illegal global_brightness min 0 max 31")
+
         self.num_led = num_led
-        order = order.lower()  # Just in case someone use CAPS here.
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
-        self.global_brightness = 4  # This is a 5 bit value, i.e. from 0 to 31. Conservative 1/8th, change if desired.
+        self.global_brightness = global_brightness
         self.use_bitbang = False  # Two raw SPI devices exist: Bitbang (software) and hardware SPI.
         self.use_ce = False  # If true, use the BusDevice abstraction layer on top of the raw SPI device
 
         self.leds = [self.LED_START, 0, 0, 0] * self.num_led  # Pixel buffer
+
+        if bus_method == 'spi':
+            selected = spi_ports[spi_bus]
+            busio.SPI(clock=selected['SCLK'], MOSI=selected['MOSI'])
+
+        elif bus_method == 'bitbang':
+            self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))
+            self.use_bitbang = True
+
         if ce is not None:
             # If a chip enable value is present, use the Adafruit CircuitPython BusDevice abstraction on top
             # of the raw SPI device (hardware or bitbang)
@@ -102,20 +145,7 @@ class APA102:
             # Convert the chip enable pin number into an object (reflection à la Python)
             ce = eval("digitalio.DigitalInOut(board.D"+str(ce)+")")
             self.use_ce = True
-        # Heuristic: Test for the hardware SPI pins. If found, use hardware SPI, otherwise bitbang SPI
-        if mosi == 10:
-            if sclk != 11:
-                raise ValueError("Illegal MOSI / SCLK combination")
-            self.spi = busio.SPI(clock=board.SCLK, MOSI=board.MOSI)
-        elif mosi == 20:
-            if sclk != 21:
-                raise ValueError("Illegal MOSI / SCLK combination")
-            self.spi = busio.SPI(clock=board.SCLK_1, MOSI=board.MOSI_1)
-        else:
-            # Use Adafruit CircuitPython BitBangIO, because the pins do not match one of the hardware SPI devices
-            # Reflection à la Python to get at the digital IO pins
-            self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))
-            self.use_bitbang = True
+
         # Add the BusDevice on top of the raw SPI
         if self.use_ce:
             self.spibus = SPIDevice(spi=self.spi,  chip_select=ce, baudrate=bus_speed_hz)
