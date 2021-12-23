@@ -102,7 +102,7 @@ class APA102:
         if num_led <= 0:
             raise ValueError("Illegal num_led can not be 0 or less")
         if num_led > 1024:
-            raise ValueError("Illegal num_led only suported upto 1024 leds")
+            raise ValueError("Illegal num_led only supported upto 1024 leds")
 
         if order not in RGB_MAP:
             raise ValueError("Illegal order not in %s" % list(RGB_MAP.keys()))
@@ -131,7 +131,7 @@ class APA102:
 
         if bus_method == 'spi':
             selected = spi_ports[spi_bus]
-            busio.SPI(clock=selected['SCLK'], MOSI=selected['MOSI'])
+            self.spi = busio.SPI(clock=selected['SCLK'], MOSI=selected['MOSI'])
 
         elif bus_method == 'bitbang':
             self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))

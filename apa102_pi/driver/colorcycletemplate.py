@@ -12,14 +12,16 @@ class ColorCycleTemplate:
     """
 
     def __init__(self, num_led, pause_value=0, num_steps_per_cycle=100,
-                 num_cycles=-1, order='rbg', mosi=10, sclk=11, ce=None):
+                 num_cycles=-1, order='rbg', bus_method = 'spi', spi_bus=0, mosi=None, sclk=None, ce=None):
         self.num_led = num_led  # The number of LEDs in the strip
         self.pause_value = pause_value  # How long to pause between two runs
         self.num_steps_per_cycle = num_steps_per_cycle  # Steps in one cycle.
         self.num_cycles = num_cycles  # How many times will the program run
         self.order = order  # Strip colour ordering
-        self.mosi = mosi  # Master out slave in of the SPI protocol
-        self.sclk = sclk  # Clock line of the SPI protocol
+        self.bus_method = bus_method  # spi or bitbang
+        self.spi_bus = spi_bus  # if spi, selects the hardware spi bus, ignored on bitbang
+        self.mosi = mosi  # Master out slave in of the SPI protocol (ignored on spi)
+        self.sclk = sclk  # Clock line of the SPI protocol (ignored on spi)
         self.ce = ce  # Chip select
 
     def init(self, strip, num_led):
@@ -62,7 +64,7 @@ class ColorCycleTemplate:
         """This method does the actual work."""
         strip = None
         try:
-            strip = apa102.APA102(num_led=self.num_led,
+            strip = apa102.APA102(num_led=self.num_led, bus_method=self.bus_method, spi_bus=self.spi_bus,
                                   mosi=self.mosi, sclk=self.sclk,
                                   order=self.order, ce=self.ce)  # Initialize the strip
             strip.clear_strip()
