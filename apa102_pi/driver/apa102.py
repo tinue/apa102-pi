@@ -1,11 +1,12 @@
 """This is the main driver module for APA102 LEDs"""
-import busio
+from math import ceil
+
 import adafruit_bitbangio as bitbangio
-import digitalio
 import board
+import busio
+import digitalio
 from adafruit_bus_device.spi_device import SPIDevice
 from microcontroller.pin import spiPorts
-from math import ceil
 
 RGB_MAP = {'rgb': [3, 2, 1], 'rbg': [3, 1, 2], 'grb': [2, 3, 1],
            'gbr': [2, 1, 3], 'brg': [1, 3, 2], 'bgr': [1, 2, 3]}
@@ -76,7 +77,8 @@ class APA102:
     # Constants
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
-    def __init__(self, num_led=8, order='rgb', bus_method='spi', spi_bus=0, mosi=None, sclk=None, ce=None, bus_speed_hz=8000000, global_brightness=4):
+    def __init__(self, num_led=8, order='rgb', bus_method='spi', spi_bus=0, mosi=None, sclk=None, ce=None,
+                 bus_speed_hz=8000000, global_brightness=4):
         """Initializes the library
 
         :param num_led: Number of LEDs in the strip
@@ -92,34 +94,14 @@ class APA102:
         """
 
         spi_ports = {}
-        for id, SCLK, MOSI, MISO in spiPorts:
-            spi_ports[id] = {'SCLK':SCLK, 'MOSI':MOSI, 'MISO':MISO}
+        for id_port, sclk_port, mosi_port, miso_port in spiPorts:
+            spi_ports[id_port] = {'SCLK': sclk_port, 'MOSI': mosi_port, 'MISO': miso_port}
 
         # Just in case someone use CAPS here.
         order = order.lower()
         bus_method = bus_method.lower()
 
-        if num_led <= 0:
-            raise ValueError("Illegal num_led can not be 0 or less")
-        if num_led > 1024:
-            raise ValueError("Illegal num_led only supported upto 1024 leds")
-
-        if order not in RGB_MAP:
-            raise ValueError("Illegal order not in %s" % list(RGB_MAP.keys()))
-
-        if bus_method not in ['spi', 'bitbang']:
-            raise ValueError("Illegal bus_method use spi or bitbang")
-
-        if bus_method == 'spi':
-            if spi_bus not in spi_ports:
-                raise ValueError("Illegal spi_bus not in %s" % list(temp.keys()))
-
-        if bus_method == 'bitbang':
-            if mosi == sclk:
-                raise ValueError("Illegal MOSI / SCLK can not be the same")
-
-        if global_brightness < 0 or global_brightness > 31:
-            raise ValueError("Illegal global_brightness min 0 max 31")
+        self.check_input(bus_method, global_brightness, mosi, num_led, order, sclk, spi_bus, spi_ports)
 
         self.num_led = num_led
         self.rgb = RGB_MAP.get(order, RGB_MAP['rgb'])
@@ -134,7 +116,7 @@ class APA102:
             self.spi = busio.SPI(clock=selected['SCLK'], MOSI=selected['MOSI'])
 
         elif bus_method == 'bitbang':
-            self.spi = bitbangio.SPI(clock=eval("board.D"+str(sclk)), MOSI=eval("board.D"+str(mosi)))
+            self.spi = bitbangio.SPI(clock=eval("board.D" + str(sclk)), MOSI=eval("board.D" + str(mosi)))
             self.use_bitbang = True
 
         if ce is not None:
@@ -143,12 +125,12 @@ class APA102:
             # The next line is just here to prevent an "unused" warning from the IDE
             digitalio.DigitalInOut(board.D1)
             # Convert the chip enable pin number into an object (reflection à la Python)
-            ce = eval("digitalio.DigitalInOut(board.D"+str(ce)+")")
+            ce = eval("digitalio.DigitalInOut(board.D" + str(ce) + ")")
             self.use_ce = True
 
         # Add the BusDevice on top of the raw SPI
         if self.use_ce:
-            self.spibus = SPIDevice(spi=self.spi,  chip_select=ce, baudrate=bus_speed_hz)
+            self.spibus = SPIDevice(spi=self.spi, chip_select=ce, baudrate=bus_speed_hz)
         else:
             # If the BusDevice is not used, the bus speed is set here instead
             while not self.spi.try_lock():
@@ -163,6 +145,26 @@ class APA102:
             print("Use bitbang SPI")
         else:
             print("Use hardware SPI")
+
+    @staticmethod
+    def check_input(bus_method, global_brightness, mosi, num_led, order, sclk, spi_bus, spi_ports):
+        """
+        Checks the input values for validity
+1       """
+        if num_led <= 0:
+            raise ValueError("Illegal num_led can not be 0 or less")
+        if num_led > 1024:
+            raise ValueError("Illegal num_led only supported upto 1024 leds")
+        if order not in RGB_MAP:
+            raise ValueError("Illegal order not in %s" % list(RGB_MAP.keys()))
+        if bus_method not in ['spi', 'bitbang']:
+            raise ValueError("Illegal bus_method use spi or bitbang")
+        if bus_method == 'spi' and spi_bus not in spi_ports:
+            raise ValueError("Illegal spi_bus not in %s" % list(spi_ports))
+        if bus_method == 'bitbang' and mosi == sclk:
+            raise ValueError("Illegal MOSI / SCLK can not be the same")
+        if global_brightness < 0 or global_brightness > 31:
+            raise ValueError("Illegal global_brightness min 0 max 31")
 
     def clock_start_frame(self):
         """Sends a start frame to the LED strip.

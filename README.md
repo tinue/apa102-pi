@@ -103,6 +103,11 @@ This way I can reprogram the light show from my desk, even if the strips sit out
 as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has
 to take the Arduino inside, or a laptop outside.
 
+
+This is a Raspberry Pi 4 with a 3D RGB Xmas Tree from Pi Hut:
+
+![Raspberry Pi 4 with Xmas tree](xmastree.jpg)
+
 ## Quick Raspberry Pi setup
 Because the Raspberry Pi Zero runs headless, I recommend using the Raspberry Pi OS *Lite* image.
 This image only contains the bare minimum of packages, and some packages have be added manually.

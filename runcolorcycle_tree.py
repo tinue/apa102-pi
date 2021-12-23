@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sample script to run a few colour tests on a christmas tree."""
+"""Sample script to run a few colour tests on a Pi Hut '3D RGB Xmas Tree for Raspberry Pi'."""
 from apa102_pi.colorschemes import colorschemes
 
 NUM_LED = 25
@@ -17,7 +17,7 @@ def main():
     # Five trips through the rainbow
     print('Five trips through the rainbow')
     my_cycle = colorschemes.Rainbow(num_led=NUM_LED, pause_value=0, order='rgb',
-                                    num_steps_per_cycle=255, num_cycles=5, bus_method='bitbang', mosi=MOSI, sclk=SCLK)
+                                    num_steps_per_cycle=100, num_cycles=10, bus_method='bitbang', mosi=MOSI, sclk=SCLK)
     my_cycle.start()
 
     print('Finished the test')
