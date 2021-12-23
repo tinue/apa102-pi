@@ -27,7 +27,7 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS 2020-12-02
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS October 30th 2021 (Debian bullseye)
 is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
 to 4.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interface Options, SPI, \<Yes\>);
@@ -143,19 +143,24 @@ If all you need is the library itself for your own projects, then this chapter i
 Install the library like this: `sudo pip3 install apa102-pi`. 
 This will install the library, and its dependencies for all users. 
 
+Note: If you want to install the library into a virtual env, you must create the venv with the option `--system-site-packages`. This is necessary to get access to the shared RPi.GPIO library.
+
 To verify the installation, download the test script from Github:
 `curl https://raw.githubusercontent.com/tinue/apa102-pi/main/runcolorcycle.py -o runcolorcycle.py`.
 To run, type `python3 ./runcolorcycle.py`.
  
-## Full installation
-To retrieve the full library including source code, this is what you need to do *additionally*:
+## Full installation into a Python virtual environment
+To retrieve the full library including source code, and use a virtual env in the process, this is what you need to do:
 - Install the git client: `sudo apt install -y git`  
 - Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
+- Create the virtual environment: `python3 -m venv --system-site-packages ./.venv`
+- Activate the virtual env: `source .venv/bin/activate`
+- Install the library: `pip3 install apa102-pi` (without `sudo`!)
+- Uninstall the library again (and keep the dependencies): `pip3 uninstall apa102-pi -y`
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
-- Optional: Remove the previously installed version of the library (but keep the necessary dependencies): `sudo pip3 uninstall apa102-pi`
 
 ## Troubleshooting
 ### Strip remains dark
@@ -203,12 +208,7 @@ the value from your application. Check `sample.py` to see how this is done.
 - 2.1.1 (2019-03-15): Enable Chip Select (thanks @grandinquisitor); Simplify installation (thanks @nielstron)
 - 2.2.0 (2019-03-16): First version that is available on PyPi (pip 3 install); Renamed package for compliancy with PEP 8.
 - 2.2.1 (2019-09-20): Nothing new, just a re-test of the library with Raspbian Buster
-- 2.3.0 (2019-11-24): Untested fix for SK9822 type LEDs; Fix name space; Update readme. Note: The namespace fix
-                      breaks compatibility with the previous version, hence the minor upgrade in the version number.
-- 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries;
-                      Re-test with Raspberry Pi OS 2020-05-27.
-- 2.4.1 (2020-12-04): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-12-02
-                      (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative"
-                      value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names
-                      in Github to reflect current standards.
-- 2.4.2 (tbd):        Add methods get_pixel and get_pixel_rgb, thanks @KAN-PC046.  
+- 2.3.0 (2019-11-24): Untested fix for SK9822 type LEDs; Fix name space; Update readme. Note: The namespace fix breaks compatibility with the previous version, hence the minor upgrade in the version number.
+- 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries; Re-test with Raspberry Pi OS 2020-05-27.
+- 2.4.1 (2020-12-04): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-12-02 (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative" value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names in Github to reflect current standards.
+- 2.4.2 (2021-12-23): Add methods get_pixel and get_pixel_rgb, support to use all hardware SPI buses on RPI 4 (by explicit choice between hardware spi and bitbanging), thanks @KAN-PC046!  Test with Raspberry Pi OS bullseye and Python 3.9. Add instructions on using a virtual env.
