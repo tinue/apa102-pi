@@ -1,6 +1,6 @@
 = apa102-pi
 Martin Erzberger <martin@erzberger.ch>
-v2.4.2, 2021-04-18
+v2.5.1, 2022-xx-xx
 
 == Introduction
 
