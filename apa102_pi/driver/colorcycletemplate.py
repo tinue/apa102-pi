@@ -1,5 +1,6 @@
 """The module contains templates for colour cycles"""
 import time
+
 from apa102_pi.driver import apa102
 
 
@@ -12,7 +13,8 @@ class ColorCycleTemplate:
     """
 
     def __init__(self, num_led, pause_value=0, num_steps_per_cycle=100,
-                 num_cycles=-1, order='rbg', bus_method = 'spi', spi_bus=0, mosi=None, sclk=None, ce=None):
+                 num_cycles=-1, order='rbg', bus_method='spi', spi_bus=0, mosi=None, sclk=None, ce=None,
+                 bus_speed_hz=8000000, global_brightness=4):
         self.num_led = num_led  # The number of LEDs in the strip
         self.pause_value = pause_value  # How long to pause between two runs
         self.num_steps_per_cycle = num_steps_per_cycle  # Steps in one cycle.
@@ -23,6 +25,8 @@ class ColorCycleTemplate:
         self.mosi = mosi  # Master out slave in of the SPI protocol (ignored on spi)
         self.sclk = sclk  # Clock line of the SPI protocol (ignored on spi)
         self.ce = ce  # Chip select
+        self.bus_speed_hz = bus_speed_hz  # Bus speed
+        self.global_brightness = global_brightness  # Overall brightness of the strip
 
     def init(self, strip, num_led):
         """This method is called to initialize a color program.
@@ -66,7 +70,8 @@ class ColorCycleTemplate:
         try:
             strip = apa102.APA102(num_led=self.num_led, bus_method=self.bus_method, spi_bus=self.spi_bus,
                                   mosi=self.mosi, sclk=self.sclk,
-                                  order=self.order, ce=self.ce)  # Initialize the strip
+                                  order=self.order, ce=self.ce, bus_speed_hz=self.bus_speed_hz,
+                                  global_brightness=self.global_brightness)  # Initialize the strip
             strip.clear_strip()
             self.init(strip, self.num_led)  # Call the subclasses init method
             strip.show()
@@ -80,9 +85,8 @@ class ColorCycleTemplate:
                         strip.show()  # repaint if required
                     time.sleep(self.pause_value)  # Pause until the next step
                 current_cycle += 1
-                if self.num_cycles != -1:
-                    if current_cycle >= self.num_cycles:
-                        break
+                if self.num_cycles != -1 and current_cycle >= self.num_cycles:
+                    break
             # Finished, cleanup everything
             self.cleanup(strip)
 
