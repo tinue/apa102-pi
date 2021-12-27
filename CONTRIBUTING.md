@@ -15,7 +15,7 @@ For most of the effects, the order of the LEDs is important. A color swipe throu
 or a marquee effect only look good if the LEDs are arranged in line with the expectations of the
 person looking at the effect. For example, if you warp a strip around a Christmas tree, then
 the effects will look strange: One would expect them to go from top to bottom, or from left to right, and not around the tree.  
-This is even visible with the small, 25 LED xmas tree from Pi Hut: The rainbow effect just does not look good. To fix this, we would need a lookup table that allows to rearrange the individual LEDs in a flexible manner. Matt Parker from the Youtube channel "Stand-up Maths" did an entire episode about this matter, and he promised to do another one this year (2021).
+This is even visible with the small, 25 LED xmas tree from Pi Hut: The rainbow effect just does not look good. To fix this, we would need a lookup table that allows to rearrange the individual LEDs in a flexible manner.
 
 ## On SPI handling
 All that the library needs to do with SPI is write data as quickly as possible. For this, it needs to open the SPI bus, change the bus speed, and then write the data.  
