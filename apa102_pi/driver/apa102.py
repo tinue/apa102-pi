@@ -78,7 +78,7 @@ class APA102:
     LED_START = 0b11100000  # Three "1" bits, followed by 5 brightness bits
 
     def __init__(self, num_led=8, order='rgb', bus_method='spi', spi_bus=0, mosi=None, sclk=None, ce=None,
-                 bus_speed_hz=8000000, global_brightness=4):
+                 bus_speed_hz=8000000, global_brightness=4, quiet=False):
         """Initializes the library
 
         :param num_led: Number of LEDs in the strip
@@ -138,13 +138,15 @@ class APA102:
                 pass
             self.spi.configure(baudrate=bus_speed_hz)
             self.spi.unlock()
-        # Debug
-        if self.use_ce:
-            print("Use software chip enable")
-        if self.use_bitbang:
-            print("Use bitbang SPI")
-        else:
-            print("Use hardware SPI")
+
+        if not quiet:
+            # Debug
+            if self.use_ce:
+                print("Use software chip enable")
+            if self.use_bitbang:
+                print("Use bitbang SPI")
+            else:
+                print("Use hardware SPI")
 
     @staticmethod
     def check_input(bus_method, global_brightness, mosi, num_led, order, sclk, spi_bus, spi_ports):
