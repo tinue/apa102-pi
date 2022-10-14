@@ -1,5 +1,6 @@
 """This is the main driver module for APA102 LEDs"""
 from math import ceil
+import logging
 
 import adafruit_bitbangio as bitbangio
 import board
@@ -93,6 +94,7 @@ class APA102:
         :param global_brightness: This is a 5 bit value, i.e. from 0 to 31.
         """
 
+        logging.basicConfig(level=logging.DEBUG)
         spi_ports = {}
         for id_port, sclk_port, mosi_port, miso_port in spiPorts:
             spi_ports[id_port] = {'SCLK': sclk_port, 'MOSI': mosi_port, 'MISO': miso_port}
@@ -140,11 +142,11 @@ class APA102:
             self.spi.unlock()
         # Debug
         if self.use_ce:
-            print("Use software chip enable")
+            logging.debug("Use software chip enable")
         if self.use_bitbang:
-            print("Use bitbang SPI")
+            logging.debug("Use bitbang SPI")
         else:
-            print("Use hardware SPI")
+            logging.debug("Use hardware SPI")
 
     @staticmethod
     def check_input(bus_method, global_brightness, mosi, num_led, order, sclk, spi_bus, spi_ports):
@@ -366,5 +368,4 @@ class APA102:
 
     def dump_array(self):
         """For debug purposes: Dump the LED array onto the console."""
-
-        print(self.leds)
+        logging.debug(self.leds)
