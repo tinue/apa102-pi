@@ -293,7 +293,7 @@ class APA102:
         output = {"rgb_color": 0, "brightness": 0}
         pixel = self.get_pixel(led_num)
 
-        output["rgb_color"] = pixel["red"] << 8 | pixel["green"] << 8 | pixel["blue"]
+        output["rgb_color"] = pixel["red"] << 16 | pixel["green"] << 8 | pixel["blue"]
         output["bright_percent"] = pixel["bright_percent"]
 
         return output
