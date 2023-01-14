@@ -4,6 +4,10 @@
 Apa102-pi is a pure Python library to drive APA102 and SK9822 type LED strands. It is supposed to work on a Raspberry
 Pi, and is not tested on any other platform.
 
+Be advised that I consider this library to be "done", and don't plan to develop more functionality.
+I still monitor the Github page for issues or pull requests, and will release minor updates
+from time to time.
+
 APA102 LEDs are typically 5050 type LEDs with an additional driver chip per LED.
 The driver chip takes care of receiving the desired colour via its input lines, and then holding
 this colour until a new command arrives.
@@ -27,7 +31,7 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS October 30th 2021 (Debian bullseye)
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS September 22nd 2022 (Debian bullseye)
 is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
 to 4.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interface Options, SPI, \<Yes\>);
@@ -112,27 +116,13 @@ This is a Raspberry Pi 4 with a 3D RGB Xmas Tree from Pi Hut:
 Because the Raspberry Pi Zero runs headless, I recommend using the Raspberry Pi OS *Lite* image.
 This image only contains the bare minimum of packages, and some packages have be added manually.
 
-The current Raspberry Pi OS Lite images can easily be set-up to run headless from the start.
-After burning the card on a Mac or PC, it will be mounted as "boot". Go to this directory,
-and create an empty file named `ssh` to enable SSH.  
-On a Mac you would do this: `touch /Volumes/boot/ssh`. To enable and configure WLAN, create
-a file named `wpa_supplicant.conf`. Its content should be:  
+I suggest to use the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) for installation.
+This software allows to setup hostname, WiFi and enable SSH without further work. The
+Raspberry Pi will run headless from the start, and there is no need to ever connect a display or
+a keyboard.
 
-	country=CH
-	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-	update_config=1
-	
-	network={
-		ssid="Your_SSID"
-		psk="Your_Password"
-		key_mgmt=WPA-PSK
-	}
-
-Of course, use the correct country and ssid/psk. After booting (be patient: The Pi will initially boot twice)
-you can SSH into the Raspberry Pi: `ssh pi@raspberrypi.local`. The initial password
-is `raspberry`: Make sure to change it right away!
-
-Next, install additional packages and enable SPI:
+After installation, ssh into the freshly setup Raspberry Pi and install additional packages.
+Also, enable SPI:
 
 - Update your installation (`sudo apt update && sudo apt -y upgrade`).
 - Install packages: `sudo apt install -y python3-pip python3-venv python3-rpi.gpio`
@@ -217,3 +207,4 @@ the value from your application. Check `sample.py` to see how this is done.
 - 2.4.0 (2020-05-28): SPI: Switch from the deprecated Adafruit_GPIO to the Adafruit CircuitPython libraries; Re-test with Raspberry Pi OS 2020-05-27.
 - 2.4.1 (2020-12-04): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-12-02 (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative" value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names in Github to reflect current standards.
 - 2.5.0 (2021-12-27): Add methods get_pixel and get_pixel_rgb, support to use all hardware SPI buses on RPI 4 (by explicit choice between hardware spi and bitbanging), thanks @KAN-PC046!  Test with Raspberry Pi OS bullseye and Python 3.9. Add instructions on using a virtual env. Note: The interface changes, so the minor version is getting increased.
+- 2.5.1 (2023-01-14): Really tiny release: One bugfix (thanks @leewillis77); Use logging instead of writing to console to reduce output.
