@@ -1,0 +1,36 @@
+# code: language=ansible
+---
+- name: Install prerequisite apt packages
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - python3-pip
+      - python3-venv
+      - python3-rpi.gpio
+      - git
+    state: present
+- name: Prepare checkout location
+  ansible.builtin.file:
+    path: "~/{{ apa102_install_dev_dir }}"
+    state: directory
+    mode: "750"
+- name: Clone the apa102 library # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/tinue/apa102-pi.git
+    dest: "~/{{ apa102_install_dev_dir }}/apa102-pi"
+    update: false
+    version: develop # Use 'main' for the stable version.
+- name: Install the Python dependencies into a virtual env
+  ansible.builtin.pip:
+    requirements: "~/{{ apa102_install_dev_dir }}/apa102-pi/requirements.txt"
+    virtualenv: "~/{{ apa102_install_dev_dir }}/apa102-pi/venv"
+    virtualenv_command: python3 -m venv
+    virtualenv_site_packages: true
+- name: Activate SPI
+  become: true
+  ansible.builtin.command:
+    cmd: "raspi-config nonint do_spi 0"
+  register: cfg_output
+  changed_when: cfg_output.rc == 0

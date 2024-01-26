@@ -31,9 +31,9 @@ via the Python interpreter. However, if you need something really fast, e.g. to 
 small "display" based on APA102 LEDs with 15 frames per second, then you have to look elsewhere.
 
 ## Prerequisites
-* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS. To date, Raspberry Pi OS September 22nd 2022 (Debian bullseye)
-is out, and the library works fine with this release. It should run on all Raspberry Pi models, from Zero
-to 4.
+* A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS (32 or 64 bit edition). To date, Raspberry 
+Pi OS, December 2023 (based on Debian bookworm) is out, and the library works fine with this release. It should run on all
+Raspberry Pi models, from Zero to 5. Note that I did not test older models in a long time, so there are no guarantees.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interface Options, SPI, \<Yes\>);
 The SPI must be free and unused.
 * For software SPI (bit bang mode): Two free GPIO pins
@@ -147,15 +147,18 @@ To run, type `python3 ./runcolorcycle.py`.
 ## Full installation into a Python virtual environment
 To retrieve the full library including source code, and use a virtual env in the process, this is what you need to do:
 - Install the git client: `sudo apt install -y git`  
-- Prepare GIT: `git config --global user.name "John Doe" && git config --global user.email johndoe@example.com`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
-- Create the virtual environment: `python3 -m venv --system-site-packages ./.venv`
-- Activate the virtual env: `source .venv/bin/activate`
-- Install the library: `pip3 install apa102-pi` (without `sudo`!)
-- Uninstall the library again (and keep the dependencies): `pip3 uninstall apa102-pi -y`
+- Create the virtual environment: `python3 -m venv --system-site-packages ./venv`
+- Activate the virtual env: `source venv/bin/activate`
+- Install the dependencies: `pip install -r requirements.txt`
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
+
+## Full installation using Ansible
+If you know [Ansible](https://www.ansible.com), you can use the role `apa102_install` from directory `AnsiblePlaybook`.
+This role installs everything that is outlined in the chapter above automatically. Once the role has executed, you can
+ssh into the Raspberry Pi, activate the venv and run the sample program.
 
 ## Troubleshooting
 ### Strip remains dark
@@ -208,3 +211,4 @@ the value from your application. Check `sample.py` to see how this is done.
 - 2.4.1 (2020-12-04): Remove global brightness parameter from the constructor; Re-test with Raspberry Pi OS 2020-12-02 (kernel 5.4) and latest Adafruit libraries. Fix default global brightness: The "conservative" value of 31 was actually 100%, because this is a 5 bit value. Also changing the branch names in Github to reflect current standards.
 - 2.5.0 (2021-12-27): Add methods get_pixel and get_pixel_rgb, support to use all hardware SPI buses on RPI 4 (by explicit choice between hardware spi and bitbanging), thanks @KAN-PC046!  Test with Raspberry Pi OS bullseye and Python 3.9. Add instructions on using a virtual env. Note: The interface changes, so the minor version is getting increased.
 - 2.5.1 (2023-01-14): Really tiny release: One bugfix (thanks @leewillis77); Use logging instead of writing to console to reduce output.
+- 2.5.2 (2024-01-26): Change in packaging to allow installation via Ansible; no change in the library. Also, re-test with Pi 5 and latest Raspberry Pi OS.

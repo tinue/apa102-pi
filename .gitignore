@@ -11,3 +11,4 @@ __pycache__/
 /.idea
 /gh-pages/
 /.venv/
+/venv/

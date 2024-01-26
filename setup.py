@@ -3,9 +3,17 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+import os
+lib_folder = os.path.dirname(os.path.realpath(__file__))
+requirement_path = f"{lib_folder}/requirements.txt"
+install_requires = []
+if os.path.isfile(requirement_path):
+    with open(requirement_path) as f:
+        install_requires = f.read().splitlines()
+
 setuptools.setup(
     name="apa102-pi",
-    version="2.5.1",
+    version="2.5.2",
     author="Martin Erzberger",
     author_email="martin@erzberger.ch",
     description="Driver for APA102 LEDs on a Raspberry Pi",
@@ -14,7 +22,7 @@ setuptools.setup(
     url="https://github.com/tinue/apa102-pi",
     python_requires='>3',
     packages=setuptools.find_packages(),
-    license='GPLv2',
+    license='GPLv3',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
@@ -24,7 +32,5 @@ setuptools.setup(
         "Topic :: System :: Hardware :: Hardware Drivers",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=["adafruit-circuitpython-bitbangio",
-                      "adafruit-circuitpython-busdevice"],
-    platforms=["Raspbian Buster", "Raspberry Pi"]
+    install_requires=install_requires
 )

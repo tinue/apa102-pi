@@ -1,0 +1,6 @@
+# code: language=ansible
+---
+- name: Install apa-102
+  hosts: pi
+  roles:
+    - role: apa102_install
