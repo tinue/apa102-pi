@@ -151,7 +151,8 @@ To retrieve the full library including source code, and use a virtual env in the
 - Get the APA102 Library and sample light programs: `git clone https://github.com/tinue/apa102-pi.git && cd apa102-pi`  
 - Create the virtual environment: `python3 -m venv --system-site-packages ./venv`
 - Activate the virtual env: `source venv/bin/activate`
-- Install the dependencies: `pip install -r requirements.txt`
+- Install the dependencies: `python -m pip install .` (this will also install the library itself from the checked out source)
+- To remove the just installed library, and use the source code instead, do this: `python -m pip uninstall apa102-pi`
 - You might want to set the number of LEDs to match your strip: `nano runcolorcycle.py`; Update the number, Ctrl-X and "Yes" to save.  
 - Run the sample lightshow: `./runcolorcycle.py`.
 

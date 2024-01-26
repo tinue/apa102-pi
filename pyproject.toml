@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apa102-pi"
+version = "2.5.2"
+authors = [
+    { name="Martin Erzberger", email="martin@erzberger.ch" },
+]
+description = "Driver for APA102 LEDs on a Raspberry Pi"
+readme = "README.md"
+requires-python = ">3"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Intended Audience :: Education",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Education",
+    "Topic :: System :: Hardware :: Hardware Drivers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["apa102", "led", "SK9822", "superled", "dotstar", "raspberry pi"]
+dependencies = [
+    "adafruit-circuitpython-bitbangio",
+    "adafruit-circuitpython-busdevice",
+]
+[tool.setuptools]
+packages = ["apa102_pi", "apa102_pi.colorschemes", "apa102_pi.driver"]
+
+[project.urls]
+Homepage = "https://github.com/tinue/apa102-pi"
+Issues = "https://github.com/tinue/apa102-pi/issues"

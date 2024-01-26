@@ -22,12 +22,17 @@
     dest: "~/{{ apa102_install_dev_dir }}/apa102-pi"
     update: false
     version: develop # Use 'main' for the stable version.
-- name: Install the Python dependencies into a virtual env
+- name: Install the library and its dependencies into a virtual env
   ansible.builtin.pip:
-    requirements: "~/{{ apa102_install_dev_dir }}/apa102-pi/requirements.txt"
+    name: apa102-pi
     virtualenv: "~/{{ apa102_install_dev_dir }}/apa102-pi/venv"
     virtualenv_command: python3 -m venv
     virtualenv_site_packages: true
+- name: Remove the library, but keep the dependencies
+  ansible.builtin.pip:
+    name: apa102-pi
+    state: absent
+    virtualenv: "~/{{ apa102_install_dev_dir }}/apa102-pi/venv"
 - name: Activate SPI
   become: true
   ansible.builtin.command:
