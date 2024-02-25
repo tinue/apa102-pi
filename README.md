@@ -55,7 +55,7 @@ the Raspberry Pi.
 The first chip will amplify the signal to 5 volts before passing it on, so it is really only the first chip
 that must detect the 3.3 volt signal.  
 To avoid this risk, use a 74AHCT125 or 74AHC125 level shifter for both the clock and the MOSI signal.
-In my limited testing with four different stripes from various Chinese sources I had no issues without
+In my limited testing with four different strips from various Chinese sources I had no issues without
 a level shifter, but your experience might be different.
 
 Without a level shifter, the wiring is very simple:
@@ -85,7 +85,7 @@ kill the Raspberry! Therefore, I recommend not to connect the power line of the 
 To be on the safe side, use a separate USB power supply for the Raspberry, and a strong 5V supply 
 for the LEDs. If you use a level shifter, power it from the 5V power supply as well.
 
-Having said this, you *can* power the Raspberry from the same power supply as the LED stripes
+Having said this, you *can* power the Raspberry from the same power supply as the LED strips
 (instead of using an extra USB power supply). If you decide to do this, make sure to never plug
 a USB power supply to the Raspberry Pi, or you risk that the LEDs try to take power through the Raspberry.
 
@@ -172,7 +172,7 @@ the supply voltage: The lower the supply voltage, the higher the chance that 3.3
 as a "one".
 
 ### Flicker
-Sometimes the end of large stripes flickers. It seems that there is a correlation amongst three variables:
+Sometimes the end of large strips flickers. It seems that there is a correlation amongst three variables:
 * SPI bus speed
 * Overall brightness of the strip
 * Length of the strip
@@ -194,7 +194,7 @@ the value from your application. Check `sample.py` to see how this is done.
 - 1.1.0 (2015-12-04): Add documentation
 - 1.1.1 (2015-12-11): Rewrote the examples, driver itself is unchanged
 - 1.2.0 (2015-12-17): Fixes for reported problems; Update all of the color samples; Decouple number of steps from number of LEDs
-- 1.3.0 (2016-03-25): Merged changes from @kapacuk: Allow stripes with different color coding than RGB
+- 1.3.0 (2016-03-25): Merged changes from @kapacuk: Allow strips with different color coding than RGB
 - 1.3.1 (2016-03-27): Merged 'rotate' method from @kapacuk; Fixed errors from previous merge
 - 1.3.2 (2016-12-25): Fixed error related to 'rotate'; Removed annoying messages on console; Added a debug method
 - 1.3.3 (2017-04-14): Merged pull request #19 from @DurandA; Cleanup; Update README.MD, No functional changes
