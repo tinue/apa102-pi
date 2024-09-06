@@ -213,3 +213,4 @@ the value from your application. Check `sample.py` to see how this is done.
 - 2.5.0 (2021-12-27): Add methods get_pixel and get_pixel_rgb, support to use all hardware SPI buses on RPI 4 (by explicit choice between hardware spi and bitbanging), thanks @KAN-PC046!  Test with Raspberry Pi OS bullseye and Python 3.9. Add instructions on using a virtual env. Note: The interface changes, so the minor version is getting increased.
 - 2.5.1 (2023-01-14): Really tiny release: One bugfix (thanks @leewillis77); Use logging instead of writing to console to reduce output.
 - 2.5.2 (2024-01-26): Change in packaging to allow installation via Ansible; no change in the library. Also, re-test with Pi 5 and latest Raspberry Pi OS.
+- 2.5.3 (2024-09-06): No change in the library itself. Upgrade Github actions due to security vulnerability; Fix misspelling in readme (thanks @ion-mironov)
