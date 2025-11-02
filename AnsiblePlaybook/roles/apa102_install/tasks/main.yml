@@ -6,9 +6,7 @@
     update_cache: true
     cache_valid_time: 3600
     name:
-      - python3-pip
-      - python3-venv
-      - python3-rpi.gpio
+      - python3-dev
       - git
     state: present
 - name: Prepare checkout location

@@ -32,7 +32,7 @@ small "display" based on APA102 LEDs with 15 frames per second, then you have to
 
 ## Prerequisites
 * A Raspberry Pi, running an up-to-date version of Raspbian / Raspberry Pi OS (32 or 64 bit edition). To date, Raspberry 
-Pi OS, December 2023 (based on Debian bookworm) is out, and the library works fine with this release. It should run on all
+Pi OS, October 1, 2025 (based on Debian trixie) is out, and the library works fine with this release. It should run on all
 Raspberry Pi models, from Zero to 5. Note that I did not test older models in a long time, so there are no guarantees.
 * If hardware SPI is used: SPI enabled and active (`raspi-config`, Interface Options, SPI, \<Yes\>);
 The SPI must be free and unused.
@@ -43,9 +43,9 @@ and [adafruit-circuitpython-busdevice](https://github.com/adafruit/Adafruit_Circ
 These libraries will be installed automatically if you follow the steps in
 [Use the APA102 project as a library](#use-the-apa102-project-as-a-library).
 
-For a permanent installation, a 10$ Raspberry Pi Zero W can be dedicated to the task of driving the LEDs.
-The connector to the LED stripe would be soldered directly to the correct ports on the board.
-For development purposes, a Raspberry Pi 4 Model B is a better choice due to its greater speed.
+For a permanent installation, a 15$ Raspberry Pi Zero 2W can be dedicated to the task of driving the LEDs.
+The connector to the LED strip would be soldered directly to the correct ports on the board.
+For development purposes, a Raspberry Pi 5 is a better choice due to its greater speed.
 Even the 1GB model is more than enough for this purpose.
 
 ## Wiring
@@ -102,7 +102,7 @@ a bunch of APA 102 LEDs; They show the "Rainbow" color scheme:
 
 ![Raspberry Pi Zero W with Phat Beat](PhatBeat.jpg)
 
-Plugged into the USB port is a WLAN stick (nowadays I use a Raspberry Pi Zero W, of course).
+Plugged into the USB port is a WLAN stick (nowadays I use a Raspberry Pi Zero 2W, of course).
 This way I can reprogram the light show from my desk, even if the strips sit outside 
 as a Christmas light. Compare this to an Arduino/WS2812 based installation: To reprogram one has
 to take the Arduino inside, or a laptop outside.
@@ -113,7 +113,7 @@ This is a Raspberry Pi 4 with a 3D RGB Xmas Tree from Pi Hut:
 ![Raspberry Pi 4 with Xmas tree](xmastree.jpg)
 
 ## Quick Raspberry Pi setup
-Because the Raspberry Pi Zero runs headless, I recommend using the Raspberry Pi OS *Lite* image.
+Because the Raspberry Pi Zero 2W runs headless, I recommend using the Raspberry Pi OS *Lite* image.
 This image only contains the bare minimum of packages, and some packages have be added manually.
 
 I suggest to use the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) for installation.
@@ -124,10 +124,9 @@ a keyboard.
 After installation, ssh into the freshly setup Raspberry Pi and install additional packages.
 Also, enable SPI:
 
-- Update your installation (`sudo apt update && sudo apt -y upgrade`).
-- Install packages: `sudo apt install -y python3-pip python3-venv python3-rpi.gpio`
+- Update your installation (`sudo apt update && sudo apt -y full-upgrade`).
+- Install packages: `sudo apt install -y python3-dev`
 - Activate SPI: `sudo raspi-config`; Go to "Interface Options"; Go to "SPI"; Enable SPI;
-While you are at it: Do change the default password! Exit the tool and reboot.  
 
 ## Use the APA102 project as a library
 The library was originally built as an educational piece of software. It shows how the protocol
@@ -135,16 +134,16 @@ for APA102 LEDs works. Most of this is explained in the form of comments in the 
 If you are interested in this, then follow up with the chapter after this one.
 If all you need is the library itself for your own projects, then this chapter is enough to get you started.
 
-Install the library like this: `sudo pip3 install apa102-pi`. 
-This will install the library, and its dependencies for all users. 
-
-Note: If you want to install the library into a virtual env, you must create the venv with the option `--system-site-packages`. This is necessary to get access to the shared RPi.GPIO library.
+- In an empty directory of your choice, create a virtual environment: `python3 -m venv --system-site-packages ./venv`
+- Activate it: `source venv/bin/activate`
+- Install the library: `pip install apa102-pi`. 
+This will install the library, and its dependencies into the virtual environment. 
 
 To verify the installation, download the test script from Github:
 `curl https://raw.githubusercontent.com/tinue/apa102-pi/main/runcolorcycle.py -o runcolorcycle.py`.
-To run, type `python3 ./runcolorcycle.py`.
+To run, type `python3 ./runcolorcycle.py`. You might have to change the number of LEDs to match your strip first.
  
-## Full installation into a Python virtual environment
+## Full installation of the library and source code
 To retrieve the full library including source code, and use a virtual env in the process, this is what you need to do:
 - Install the git client: `sudo apt install -y git`  
 - Create a development directory and change into it: `mkdir ~/Development && cd ~/Development`  
@@ -214,3 +213,4 @@ the value from your application. Check `sample.py` to see how this is done.
 - 2.5.1 (2023-01-14): Really tiny release: One bugfix (thanks @leewillis77); Use logging instead of writing to console to reduce output.
 - 2.5.2 (2024-01-26): Change in packaging to allow installation via Ansible; no change in the library. Also, re-test with Pi 5 and latest Raspberry Pi OS.
 - 2.5.3 (2024-09-06): No change in the library itself. Upgrade Github actions due to security vulnerability; Fix misspelling in readme (thanks @ion-mironov)
+- 2.5.4 (2025-11-02): No change in the library itself. Update readme and Ansible playbook for Debian Trixie.
