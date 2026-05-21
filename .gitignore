@@ -12,3 +12,7 @@ __pycache__/
 /gh-pages/
 /.venv/
 /venv/
+
+# Documentation website lives in the gh-pages branch, checked out as a worktree here.
+# One-time setup per clone: git worktree add docs gh-pages
+docs/
